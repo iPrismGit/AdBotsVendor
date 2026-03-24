@@ -1,4 +1,4 @@
-package com.iprism.adbotsvendor.ui.theme
+package com.iprism.adbotsvendor.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

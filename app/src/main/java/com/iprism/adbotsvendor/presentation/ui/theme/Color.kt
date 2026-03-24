@@ -1,4 +1,4 @@
-package com.iprism.adbotsvendor.ui.theme
+package com.iprism.adbotsvendor.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
