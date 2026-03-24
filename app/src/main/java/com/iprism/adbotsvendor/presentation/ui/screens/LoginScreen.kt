@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,10 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.navigation.Screen
+import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
+import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
-    var mobileNumber by remember { mutableStateOf("") }
+    var mobileNumber by rememberSaveable { mutableStateOf("") }
     val darkBlue = Color(0xFF273F87)
 
     Column(
@@ -42,9 +45,7 @@ fun LoginScreen(navController: NavHostController) {
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = "AdBots Logo",
-                modifier = Modifier
-                    .fillMaxWidth(0.6f)
-                    .aspectRatio(1f)
+                modifier = Modifier.size(180.dp)
             )
         }
 
@@ -53,7 +54,7 @@ fun LoginScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .border(1.dp, Color(0xFFF0F0F0), RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                .border(1.dp, BorderGrey, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
             color = Color.White,
             tonalElevation = 2.dp
         ) {
@@ -71,45 +72,39 @@ fun LoginScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Custom Input Field
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(8.dp))
-                        .padding(horizontal = 12.dp),
+                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Flag Icon (Placeholder using generic drawable if specific one not found)
-                    // In a real app, you'd use a specific flag drawable
-                    Icon(
-                        painter = painterResource(id = android.R.drawable.ic_menu_directions), // Placeholder for flag
-                        contentDescription = "Flag",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
-                    Text(
-                        text = "+91",
-                        fontSize = 14.sp,
+                        Image(
+                            painter = painterResource(R.drawable.india_flag),
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp).padding(start = 16.dp, end = 16.dp)
+                        )
+
+                    VerticalDivider(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(1.dp),
                         color = Color.LightGray
                     )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(24.dp)
-                            .background(Color(0xFFEEEEEE))
-                    )
-                    
+
                     TextField(
                         value = mobileNumber,
                         onValueChange = { mobileNumber = it },
                         modifier = Modifier.fillMaxWidth(),
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        placeholder = {
+                            Text(
+                                "Enter Mobile Number",
+                                color = Grey555,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -117,7 +112,6 @@ fun LoginScreen(navController: NavHostController) {
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                         ),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         singleLine = true
                     )
                 }
@@ -147,7 +141,7 @@ fun LoginScreen(navController: NavHostController) {
                         color = Color.White
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
