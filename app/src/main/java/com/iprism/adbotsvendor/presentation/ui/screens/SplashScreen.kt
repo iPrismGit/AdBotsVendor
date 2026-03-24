@@ -10,14 +10,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.navigation.Screen
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
-        /*delay(500)
+        delay(500)
         navController.navigate(Screen.Login.route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
-        }*/
+        }
     }
 
     Box(

@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
+import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
 
 @Composable
@@ -41,6 +43,15 @@ fun AppNavHost(
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen(navController)
+            }
+            composable(Screen.Login.route) {
+                LoginScreen(navController)
+            }
+            composable(Screen.Otp.route) {
+                OtpScreen(navController)
+            }
+            composable(Screen.Home.route) {
+                OtpScreen(navController)
             }
         }
     }
