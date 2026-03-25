@@ -12,8 +12,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
+import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
 
@@ -26,8 +29,8 @@ fun AppNavHost(
 
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
-        Screen.Home.route,
-        Screen.Home.route
+        Screen.Analytics.route,
+        Screen.Profile.route
     )
 
     Scaffold(
@@ -52,10 +55,16 @@ fun AppNavHost(
                 OtpScreen(navController)
             }
             composable(Screen.Home.route) {
-                OtpScreen(navController)
+                HomeScreen(navController)
+            }
+            composable(Screen.Analytics.route) {
+                AnalyticsScreen(navController)
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen(navController)
             }
             composable(Screen.Register.route) {
-                RegisterScreen { navController.popBackStack() }
+                RegisterScreen({ navController.popBackStack() }, { navController.navigate(Screen.Home.route) })
             }
         }
     }

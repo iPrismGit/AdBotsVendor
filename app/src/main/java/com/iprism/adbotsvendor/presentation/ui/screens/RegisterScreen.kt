@@ -39,7 +39,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 
 @Composable
-fun RegisterScreen(onBack :() -> Unit) {
+fun RegisterScreen(onBack :() -> Unit, onContinueClick :() -> Unit) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
@@ -141,7 +141,7 @@ fun RegisterScreen(onBack :() -> Unit) {
 
         Button(
             onClick = {
-
+                onContinueClick()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,5 +164,5 @@ private val cities = listOf(
 @Preview(showBackground = true)
 @Composable
 fun RegisterPreview() {
-    RegisterScreen({})
+    RegisterScreen(onBack = {}, onContinueClick = {})
 }
