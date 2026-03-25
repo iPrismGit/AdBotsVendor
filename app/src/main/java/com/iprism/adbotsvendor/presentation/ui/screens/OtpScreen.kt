@@ -5,11 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -117,7 +113,7 @@ fun OtpScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
-                    onClick = { navController.navigate(Screen.Home.route) },
+                    onClick = { navController.navigate(Screen.Register.route) },
                     modifier = Modifier
                         .fillMaxWidth().imePadding(),
                     shape = RoundedCornerShape(12.dp),

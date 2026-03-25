@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">AdBotsVendor</string>
+    <string name="your_name">Your Name</string>
+    <string name="enter">Enter</string>
+    <string name="business_name">Business Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="city">City</string>
+    <string name="choose">Choose</string>
+    <string name="area">Area</string>
+    <string name="business_category">Business Category</string>
+    <string name="continue1">Continue</string>
+    <string name="add_business_details">Add business details</string>
 </resources>

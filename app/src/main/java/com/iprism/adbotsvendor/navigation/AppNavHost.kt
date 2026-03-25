@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
 
 @Composable
@@ -25,8 +26,8 @@ fun AppNavHost(
 
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
-        Screen.Register.route,
-        Screen.Register.route
+        Screen.Home.route,
+        Screen.Home.route
     )
 
     Scaffold(
@@ -52,6 +53,9 @@ fun AppNavHost(
             }
             composable(Screen.Home.route) {
                 OtpScreen(navController)
+            }
+            composable(Screen.Register.route) {
+                RegisterScreen { navController.popBackStack() }
             }
         }
     }
