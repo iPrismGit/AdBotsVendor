@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -21,31 +23,32 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.navigation.Screen
+import com.iprism.adbotsvendor.presentation.ui.components.OTPView
+import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
+import com.iprism.adbotsvendor.presentation.ui.theme.Green
+import com.iprism.adbotsvendor.presentation.ui.theme.Grey
+import com.iprism.adbotsvendor.presentation.ui.theme.LightBlack
+import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 
 @Composable
 fun OtpScreen(navController: NavHostController) {
-    val darkBlue = Color(0xFF273F87)
-    val resendGreen = Color(0xFF00C566)
-    
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
-        // Top Bar with Back Arrow
         IconButton(
             onClick = { navController.popBackStack() },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(start = 8.dp)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
                 tint = Color.Black,
                 modifier = Modifier.size(28.dp)
             )
         }
-
-        // Logo Section
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -58,8 +61,6 @@ fun OtpScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(0.6f)
             )
         }
-
-        // Card Section
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -69,40 +70,23 @@ fun OtpScreen(navController: NavHostController) {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(16.dp)
                     .fillMaxWidth()
             ) {
                 Text(
                     text = "Enter your code",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = Color.Black
                 )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "918978676356",
-                    fontSize = 14.sp,
-                    color = Color.Gray
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Grey
                 )
-
                 Spacer(modifier = Modifier.height(32.dp))
-
-                // OTP Inputs
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    OtpDigitBox("0")
-                    OtpDigitBox("1")
-                    OtpDigitBox("3")
-                    OtpDigitBox("4")
-                }
-
+                OTPView(4) { }
                 Spacer(modifier = Modifier.height(24.dp))
-                
-                // Resend and Timer Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,62 +95,43 @@ fun OtpScreen(navController: NavHostController) {
                     Row {
                         Text(
                             text = "Didn't receive the code? ",
-                            fontSize = 13.sp,
-                            color = Color.Gray
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LightBlack
                         )
                         Text(
                             text = "Resend",
-                            fontSize = 13.sp,
-                            color = resendGreen,
+                            color = Green,
+                            fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
                             modifier = Modifier.clickable { /* Resend logic */ }
                         )
                     }
                     Text(
                         text = "00:26",
-                        fontSize = 13.sp,
-                        color = Color.Gray
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LightBlack
                     )
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Continue Button
                 Button(
                     onClick = { navController.navigate(Screen.Home.route) },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp),
+                        .fillMaxWidth().imePadding(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = darkBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
                     Text(
                         text = "Continue",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
-                
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
-    }
-}
-
-@Composable
-fun OtpDigitBox(digit: String = "") {
-    Box(
-        modifier = Modifier
-            .size(width = 68.dp, height = 56.dp)
-            .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(8.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = digit,
-            fontSize = 18.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Normal
-        )
     }
 }

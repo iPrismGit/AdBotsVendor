@@ -93,7 +93,11 @@ fun LoginScreen(onContinueClick: () -> Unit) {
 
                     TextField(
                         value = mobileNumber,
-                        onValueChange = { mobileNumber = it },
+                        onValueChange = {
+                            if (it.length <= 10 && it.all { char -> char.isDigit() }) {
+                                mobileNumber = it
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         textStyle = MaterialTheme.typography.bodySmall,
                         placeholder = {
@@ -122,13 +126,11 @@ fun LoginScreen(onContinueClick: () -> Unit) {
                     color = Color.DarkGray,
                     style = MaterialTheme.typography.titleSmall
                 )
-
                 Spacer(modifier = Modifier.height(32.dp))
-
                 Button(
                     onClick = { onContinueClick() },
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth().imePadding(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
@@ -136,10 +138,9 @@ fun LoginScreen(onContinueClick: () -> Unit) {
                         text = "Continue",
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.White,
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(8.dp),
                     )
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }

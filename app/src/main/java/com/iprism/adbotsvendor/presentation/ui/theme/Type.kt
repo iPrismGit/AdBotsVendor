@@ -21,7 +21,6 @@ val MontserratFamily = FontFamily(
     Font(R.font.montserrat_extrabold, FontWeight.ExtraLight),
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
 
     // For big Texts
@@ -53,12 +52,12 @@ val Typography = Typography(
     ),
     headlineMedium = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 20.sp,
+        fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
     ),
     headlineSmall = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 16.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
     ),
 
