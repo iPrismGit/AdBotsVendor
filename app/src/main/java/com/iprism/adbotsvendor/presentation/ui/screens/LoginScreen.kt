@@ -22,12 +22,13 @@ import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.navigation.Screen
 import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
+import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(onContinueClick: () -> Unit) {
+
     var mobileNumber by rememberSaveable { mutableStateOf("") }
-    val darkBlue = Color(0xFF273F87)
 
     Column(
         modifier = Modifier
@@ -35,7 +36,6 @@ fun LoginScreen(navController: NavHostController) {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo Section
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -48,8 +48,6 @@ fun LoginScreen(navController: NavHostController) {
                 modifier = Modifier.size(180.dp)
             )
         }
-
-        // Card Section
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,14 +58,13 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(16.dp)
                     .fillMaxWidth()
             ) {
                 Text(
                     text = "Mobile Number",
-                    fontSize = 14.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -79,11 +76,13 @@ fun LoginScreen(navController: NavHostController) {
                         .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                        Image(
-                            painter = painterResource(R.drawable.india_flag),
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp).padding(start = 16.dp, end = 16.dp)
-                        )
+                    Image(
+                        painter = painterResource(R.drawable.india_flag),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .padding(start = 16.dp, end = 16.dp)
+                    )
 
                     VerticalDivider(
                         modifier = Modifier
@@ -120,25 +119,24 @@ fun LoginScreen(navController: NavHostController) {
 
                 Text(
                     text = "By clicking, I accept the terms of service and privacy policy",
-                    fontSize = 11.sp,
-                    color = Color.DarkGray
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.titleSmall
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { navController.navigate(Screen.Otp.route) },
+                    onClick = { onContinueClick() },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp),
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = darkBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
                     Text(
                         text = "Continue",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
 

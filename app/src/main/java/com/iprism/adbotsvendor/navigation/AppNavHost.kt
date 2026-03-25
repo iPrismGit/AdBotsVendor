@@ -45,7 +45,7 @@ fun AppNavHost(
                 SplashScreen(navController)
             }
             composable(Screen.Login.route) {
-                LoginScreen(navController)
+                LoginScreen({ navController.navigate(Screen.Otp.route) })
             }
             composable(Screen.Otp.route) {
                 OtpScreen(navController)

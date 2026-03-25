@@ -49,38 +49,37 @@ val Typography = Typography(
     headlineLarge =  TextStyle(
         fontFamily = MontserratFamily,
         fontSize = 30.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
     ),
-
     headlineMedium = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 30.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
     ),
     headlineSmall = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
     ),
 
     // For Text Titles
     titleLarge = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold,
-    ),
-    titleMedium = TextStyle(
-        fontFamily = MontserratFamily,
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
     ),
-    titleSmall = TextStyle(
+    titleMedium = TextStyle(
         fontFamily = MontserratFamily,
         fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+    ),
+    titleSmall = TextStyle(
+        fontFamily = MontserratFamily,
+        fontSize = 12.sp,
         fontWeight = FontWeight.Normal,
     ),
 
-    // For TextFields
+    // For TextFields and Texts
 
     bodyLarge = TextStyle(
         fontFamily = MontserratFamily,
@@ -89,8 +88,8 @@ val Typography = Typography(
     ),
     bodyMedium = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
     ),
     bodySmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -106,7 +105,7 @@ val Typography = Typography(
     ),
     labelLarge = TextStyle(
         fontFamily = MontserratFamily,
-        fontSize = 16.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
     ),
     labelSmall = TextStyle(
