@@ -1,14 +1,13 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,22 +34,57 @@ fun AnalyticsScreen(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.background(DarkBlue)
+            modifier = Modifier
+                .background(DarkBlue)
+                .padding(12.dp)
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    GradientDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GradientDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GradientDivider()
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Image(
+                    painter = painterResource(R.drawable.add_bots_logo),
+                    contentDescription = "Location",
+                    modifier = Modifier.size(width = 120.dp, height = 60.dp),
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    GradientDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GradientDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GradientDivider()
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
                     painter = painterResource(R.drawable.location_img1),
                     contentDescription = "Location",
+                    modifier = Modifier.size(46.dp),
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -59,9 +93,10 @@ fun AnalyticsScreen(navController: NavHostController) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "Hyderabad",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            color = White,
+                            fontFamily = MontserratFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
@@ -71,45 +106,26 @@ fun AnalyticsScreen(navController: NavHostController) {
                     }
                     Text(
                         text = "Road No 4, Banjara Hills...",
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = White,
+                        fontFamily = MontserratFamily,
+                        fontWeight = FontWeight.Normal,
                         fontSize = 12.sp
                     )
                 }
-
-                Surface(
-                    modifier = Modifier.size(45.dp),
-                    shape = CircleShape,
-                    color = Color.White
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Outlined.LocationOn,
-                            contentDescription = "Wallet",
-                            tint = DarkBlue,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-
+                Image(
+                    painter = painterResource(R.drawable.wallet_img),
+                    contentDescription = "wallet",
+                    modifier = Modifier.size(40.dp),
+                )
                 Spacer(modifier = Modifier.width(12.dp))
-
-                // Notification Icon
-                Surface(
-                    modifier = Modifier.size(45.dp),
-                    shape = CircleShape,
-                    color = Color.White
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Outlined.Notifications,
-                            contentDescription = "Notifications",
-                            tint = DarkBlue,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
+                Image(
+                    painter = painterResource(R.drawable.notifications_img),
+                    contentDescription = "notifications",
+                    modifier = Modifier.size(40.dp),
+                )
             }
         }
+        GradientDivider()
 
         // Promotions Section
         Column(modifier = Modifier.padding(12.dp)) {
@@ -122,7 +138,7 @@ fun AnalyticsScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(2) {
+                items(8) {
                     PromotionCardInAnalytics()
                 }
             }
@@ -191,9 +207,33 @@ fun PromotionCardInAnalytics() {
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkRed)
         ) {
-            Text(text = "View Analytics", fontSize = 12.sp, color = Color.White, fontFamily = MontserratFamily, fontWeight = FontWeight.Medium)
+            Text(
+                text = "View Analytics",
+                fontSize = 12.sp,
+                color = Color.White,
+                fontFamily = MontserratFamily,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
+}
+
+@Composable
+fun GradientDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        White,
+                        DarkRed,
+                        White
+                    )
+                )
+            )
+    )
 }
 
 @Preview
