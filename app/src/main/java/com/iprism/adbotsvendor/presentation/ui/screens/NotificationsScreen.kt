@@ -112,7 +112,7 @@ fun NotificationItem(notification: NotificationData) {
                 color = LightGrey2
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = notification.body,
             fontSize = 14.sp,
