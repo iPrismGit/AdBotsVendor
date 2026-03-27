@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +43,7 @@ fun WalletHistoryScreen(navController: NavHostController) {
             text = "Wallet History",
             style = MaterialTheme.typography.headlineSmall,
             color = BLACK,
-            modifier = Modifier.padding(horizontal = 12.dp)
+            modifier = Modifier.padding(all = 12.dp)
         )
 
         LazyColumn(
