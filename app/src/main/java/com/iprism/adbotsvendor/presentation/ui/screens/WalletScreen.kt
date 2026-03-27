@@ -44,7 +44,10 @@ fun WalletScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.padding(start = 6.dp)) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(start = 6.dp)
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
@@ -96,14 +99,14 @@ fun WalletScreen(navController: NavHostController) {
             value = amount,
             onValueChange = { amount = it },
             textStyle = MaterialTheme.typography.bodySmall,
-            placeholder = { 
+            placeholder = {
                 Text(
-                    "Add money to Wallet", 
+                    "Add money to Wallet",
                     color = Grey555,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall
-                ) 
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -180,7 +183,7 @@ fun WalletScreen(navController: NavHostController) {
                 modifier = Modifier.padding(8.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
     }
 }
