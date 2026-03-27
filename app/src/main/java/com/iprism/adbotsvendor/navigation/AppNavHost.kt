@@ -15,6 +15,8 @@ import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.NotificationItem
+import com.iprism.adbotsvendor.presentation.ui.screens.NotificationsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
@@ -66,6 +68,9 @@ fun AppNavHost(
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(navController)
+            }
+            composable(Screen.Notifications.route) {
+                NotificationsScreen(navController)
             }
             composable(Screen.Register.route) {
                 RegisterScreen({ navController.popBackStack() }, { navController.navigate(Screen.Home.route) })

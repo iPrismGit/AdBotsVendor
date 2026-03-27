@@ -2,6 +2,7 @@ package com.iprism.adbotsvendor.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -115,17 +116,22 @@ fun HomeScreen(navController: NavHostController) {
                         fontSize = 12.sp
                     )
                 }
-                Image(
-                    painter = painterResource(R.drawable.wallet_img),
-                    contentDescription = "wallet",
-                    modifier = Modifier.size(40.dp),
-                )
+                IconButton(onClick = {}) {
+                    Image(
+                        painter = painterResource(R.drawable.wallet_img),
+                        contentDescription = "wallet",
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    painter = painterResource(R.drawable.notifications_img),
-                    contentDescription = "notifications",
-                    modifier = Modifier.size(40.dp),
-                )
+                IconButton(onClick = { navController.navigate("notifications") }) {
+                    Image(
+                        painter = painterResource(R.drawable.notifications_img),
+                        contentDescription = "notifications",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
             }
         }
         GradientDivider()
@@ -139,7 +145,11 @@ fun HomeScreen(navController: NavHostController) {
             Image(
                 painter = painterResource(R.drawable.home_ad_img),
                 contentDescription = null,
-                modifier = Modifier.width(220.dp).height(120.dp).align(Alignment.CenterHorizontally), contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .width(220.dp)
+                    .height(120.dp)
+                    .align(Alignment.CenterHorizontally),
+                contentScale = ContentScale.Fit,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -170,7 +180,13 @@ fun HomeScreen(navController: NavHostController) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, DarkBlue),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBlue),
                 ) {
-                    Text(text = "View More", fontFamily = MontserratFamily, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
+                    Text(
+                        text = "View More",
+                        fontFamily = MontserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                    )
                 }
 
                 Button(
@@ -180,7 +196,13 @@ fun HomeScreen(navController: NavHostController) {
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Red)
                 ) {
-                    Text(text = "Promote now",  fontFamily = MontserratFamily, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
+                    Text(
+                        text = "Promote now",
+                        fontFamily = MontserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                    )
                 }
             }
         }
