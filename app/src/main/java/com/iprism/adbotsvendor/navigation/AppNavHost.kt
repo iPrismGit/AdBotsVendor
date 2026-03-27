@@ -17,6 +17,7 @@ import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
 
@@ -59,6 +60,9 @@ fun AppNavHost(
             }
             composable(Screen.Analytics.route) {
                 AnalyticsScreen(navController)
+            }
+            composable(Screen.PromotionDetails.route) {
+                PromotionDetailsScreen(navController)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(navController)

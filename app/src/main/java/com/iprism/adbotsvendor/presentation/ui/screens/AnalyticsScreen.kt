@@ -139,7 +139,7 @@ fun AnalyticsScreen(navController: NavHostController) {
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(8) {
-                    PromotionCardInAnalytics()
+                    PromotionCardInAnalytics({ navController.navigate("promotion_details") })
                 }
             }
         }
@@ -147,7 +147,7 @@ fun AnalyticsScreen(navController: NavHostController) {
 }
 
 @Composable
-fun PromotionCardInAnalytics() {
+fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
     val cardGradient = Brush.horizontalGradient(
         colors = listOf(Color(0xFF015DC5), Color(0xFF559CEE))
     )
@@ -199,7 +199,7 @@ fun PromotionCardInAnalytics() {
         }
 
         Button(
-            onClick = { /* Already in Analytics or nested view */ },
+            onClick = { onAnalyticsClick() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .height(32.dp),
