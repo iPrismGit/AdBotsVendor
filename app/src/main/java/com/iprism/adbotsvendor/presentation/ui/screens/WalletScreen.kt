@@ -54,7 +54,7 @@ fun WalletScreen(navController: NavHostController) {
                     modifier = Modifier.size(28.dp)
                 )
             }
-            IconButton(onClick = { }, modifier = Modifier.padding(end = 6.dp)) {
+            IconButton(onClick = { navController.navigate("wallet_history") }, modifier = Modifier.padding(end = 6.dp)) {
                 Icon(
                     painter = painterResource(R.drawable.wallet_history_img),
                     contentDescription = "History",

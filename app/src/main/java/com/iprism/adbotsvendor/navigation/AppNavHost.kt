@@ -21,6 +21,7 @@ import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.WalletHistoryScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletScreen
 
 @Composable
@@ -74,6 +75,9 @@ fun AppNavHost(
             }
             composable(Screen.Wallet.route) {
                 WalletScreen(navController)
+            }
+            composable(Screen.WalletHistory.route) {
+                WalletHistoryScreen(navController)
             }
             composable(Screen.Register.route) {
                 RegisterScreen(
