@@ -116,7 +116,7 @@ fun HomeScreen(navController: NavHostController) {
                         fontSize = 12.sp
                     )
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = { navController.navigate("wallet") }) {
                     Image(
                         painter = painterResource(R.drawable.wallet_img),
                         contentDescription = "wallet",
