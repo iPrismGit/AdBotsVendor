@@ -112,17 +112,22 @@ fun AnalyticsScreen(navController: NavHostController) {
                         fontSize = 12.sp
                     )
                 }
-                Image(
-                    painter = painterResource(R.drawable.wallet_img),
-                    contentDescription = "wallet",
-                    modifier = Modifier.size(40.dp),
-                )
+                IconButton(onClick = { navController.navigate("wallet") }) {
+                    Image(
+                        painter = painterResource(R.drawable.wallet_img),
+                        contentDescription = "wallet",
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    painter = painterResource(R.drawable.notifications_img),
-                    contentDescription = "notifications",
-                    modifier = Modifier.size(40.dp),
-                )
+                IconButton(onClick = { navController.navigate("notifications") }) {
+                    Image(
+                        painter = painterResource(R.drawable.notifications_img),
+                        contentDescription = "notifications",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
             }
         }
         GradientDivider()
