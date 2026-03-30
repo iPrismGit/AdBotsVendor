@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
+import com.iprism.adbotsvendor.presentation.ui.screens.AboutUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ContactUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
@@ -22,6 +23,7 @@ import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.TermsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletHistoryScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletScreen
 
@@ -82,6 +84,12 @@ fun AppNavHost(
             }
             composable(Screen.ContactUs.route) {
                 ContactUsScreen({navController.popBackStack()},{ navController.popBackStack()})
+            }
+            composable(Screen.AboutUs.route) {
+                AboutUsScreen({navController.popBackStack()})
+            }
+            composable(Screen.Terms.route) {
+                TermsScreen({navController.popBackStack()})
             }
             composable(Screen.Register.route) {
                 RegisterScreen(

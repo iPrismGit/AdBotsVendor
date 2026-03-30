@@ -73,12 +73,14 @@ fun ProfileScreen(navController: NavHostController) {
                 color = Color.White
             )
             Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(R.drawable.edit_icon),
-                contentDescription = "Edit",
-                tint = White,
-                modifier = Modifier.size(32.dp)
-            )
+            IconButton(onClick = {navController.navigate("register")}) {
+                Icon(
+                    painter = painterResource(R.drawable.edit_icon),
+                    contentDescription = "Edit",
+                    tint = White,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -123,11 +125,11 @@ fun ProfileScreen(navController: NavHostController) {
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
                     title = "Terms & Conditions",
-                    navigate = {}
+                    navigate = {navController.navigate("terms")}
                 )
                 DottedDivider()
                 ProfileOptionItem(icon = painterResource(R.drawable.terms_img), title = "About Us",
-                    navigate = {})
+                    navigate = {navController.navigate("about_us")})
             }
         }
 
