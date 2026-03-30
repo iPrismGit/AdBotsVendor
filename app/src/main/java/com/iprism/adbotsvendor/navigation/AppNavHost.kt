@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.ContactUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.NotificationsScreen
@@ -78,6 +79,9 @@ fun AppNavHost(
             }
             composable(Screen.WalletHistory.route) {
                 WalletHistoryScreen(navController)
+            }
+            composable(Screen.ContactUs.route) {
+                ContactUsScreen({navController.popBackStack()},{ navController.popBackStack()})
             }
             composable(Screen.Register.route) {
                 RegisterScreen(
