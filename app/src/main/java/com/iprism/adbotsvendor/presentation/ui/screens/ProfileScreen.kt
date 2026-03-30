@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.DottedDivider
@@ -32,6 +34,18 @@ import com.iprism.adbotsvendor.presentation.ui.theme.White
 @Composable
 fun ProfileScreen(navController: NavHostController) {
     val gradientColors = listOf(Color(0xFF273F87), Color(0xFFEEEEEE), Color(0xFFEEEEEE))
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onDismiss = { showLogoutDialog = false },
+            onConfirm = {
+                showLogoutDialog = false
+                // Handle logout logic here
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,15 +116,18 @@ fun ProfileScreen(navController: NavHostController) {
             Column {
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.profile_icon),
-                    title = "Profile"
+                    title = "Profile",
+                    navigate = { navController.navigate("register") }
                 )
                 DottedDivider()
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
-                    title = "Terms & Conditions"
+                    title = "Terms & Conditions",
+                    navigate = {}
                 )
                 DottedDivider()
-                ProfileOptionItem(icon = painterResource(R.drawable.terms_img), title = "About Us")
+                ProfileOptionItem(icon = painterResource(R.drawable.terms_img), title = "About Us",
+                    navigate = {})
             }
         }
 
@@ -118,7 +135,7 @@ fun ProfileScreen(navController: NavHostController) {
 
         // Logout Button
         Button(
-            onClick = { /* Logout */ },
+            onClick = { showLogoutDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 30.dp)
@@ -171,11 +188,11 @@ fun ActionCard(modifier: Modifier, title: String, icon: Painter, navigate: () ->
 }
 
 @Composable
-fun ProfileOptionItem(icon: Painter, title: String) {
+fun ProfileOptionItem(icon: Painter, title: String, navigate: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Action */ }
+            .clickable { navigate() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -191,5 +208,61 @@ fun ProfileOptionItem(icon: Painter, title: String) {
             color = BLACK,
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+@Composable
+fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want\nLogout?",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onConfirm,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Black),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+                    ) {
+                        Text(text = "Yes", color = BLACK, fontSize = 16.sp, fontFamily = MontserratFamily
+                            , fontWeight = FontWeight.Normal)
+                    }
+
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2CC990))
+                    ) {
+                        Text(text = "No", fontSize = 16.sp, color = Color.White, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
+                    }
+                }
+            }
+        }
     }
 }
