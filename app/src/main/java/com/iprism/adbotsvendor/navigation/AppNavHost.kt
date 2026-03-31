@@ -20,6 +20,7 @@ import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.NotificationsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.OtpScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.PreviewScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
@@ -93,7 +94,10 @@ fun AppNavHost(
                 TermsScreen({navController.popBackStack()})
             }
             composable(Screen.BusinessDetails.route) {
-                BusinessDetailsScreen({navController.popBackStack()}, {})
+                BusinessDetailsScreen({navController.popBackStack()}, {navController.navigate("preview")})
+            }
+            composable(Screen.Preview.route) {
+                PreviewScreen(navController)
             }
             composable(Screen.Register.route) {
                 RegisterScreen(
