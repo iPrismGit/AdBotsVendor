@@ -33,6 +33,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,7 +56,9 @@ import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
+import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
+import com.iprism.adbotsvendor.presentation.ui.theme.White
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -71,12 +74,16 @@ fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
     var selectedArea by rememberSaveable { mutableStateOf<Gender?>(null) }
     var selectedBusinessCat by rememberSaveable { mutableStateOf<Gender?>(null) }
 
-    var showDatePickerSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
     val sheetState = rememberModalBottomSheetState()
 
-    if (showDatePickerSheet) {
+    if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showDatePickerSheet = false },
+            onDismissRequest = {
+                showBottomSheet = false
+                bottomSheetStep = 0
+            },
             sheetState = sheetState,
             dragHandle = {
                 Box(
@@ -89,10 +96,17 @@ fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
             },
             containerColor = Color.White
         ) {
-            ChooseDatesContent(onContinue = {
-                showDatePickerSheet = false
-                onContinueClick()
-            })
+            if (bottomSheetStep == 0) {
+                ChooseDatesContent(onContinue = {
+                    bottomSheetStep = 1
+                })
+            } else {
+                HowManyScreensContent(onContinue = {
+                    showBottomSheet = false
+                    bottomSheetStep = 0
+                    onContinueClick()
+                })
+            }
         }
     }
 
@@ -189,7 +203,7 @@ fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
 
         Button(
             onClick = {
-                showDatePickerSheet = true
+                showBottomSheet = true
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -272,7 +286,11 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Start Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+                Text(
+                    text = "Start Date",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = BLACK1
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 DateSelectorBox(
                     text = startDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
@@ -297,7 +315,9 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (startDate != null && endDate != null) DarkBlue else Color(0xFFEEEEEE),
+                containerColor = if (startDate != null && endDate != null) DarkBlue else Color(
+                    0xFFEEEEEE
+                ),
                 contentColor = if (startDate != null && endDate != null) Color.White else Color.LightGray
             )
         ) {
@@ -305,6 +325,96 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
                 text = "Continue",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun HowManyScreensContent(onContinue: () -> Unit) {
+    var screenCount by remember { mutableIntStateOf(1) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+    ) {
+        Text(
+            text = "How Many Screens",
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(text = "Select", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = LightGrey1,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .background(
+                    color = White,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = String.format("%02d", screenCount),
+                fontFamily = MontserratFamily,
+                fontWeight = FontWeight.Normal,
+                color = BLACK,
+                fontSize = 12.sp
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Text(
+                    text = "-",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { if (screenCount > 1) screenCount-- }
+                )
+                Text(
+                    text = screenCount.toString(),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = MontserratFamily,
+                    color = BLACK
+                )
+                Text(
+                    text = "+",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { screenCount++ }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Button(
+            onClick = onContinue,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+        ) {
+            Text(
+                text = "Continue",
+                style = MaterialTheme.typography.labelMedium
             )
         }
 
