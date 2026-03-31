@@ -190,10 +190,10 @@ fun HomeScreen(navController: NavHostController) {
                 }
 
                 Button(
-                    onClick = { /* Promote Now */ },
+                    onClick = { navController.navigate("business_details") },
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .weight(1f),
-                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Red)
                 ) {
                     Text(

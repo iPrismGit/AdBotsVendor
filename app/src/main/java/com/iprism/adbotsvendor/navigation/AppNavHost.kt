@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.AboutUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.BusinessDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ContactUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
@@ -90,6 +91,9 @@ fun AppNavHost(
             }
             composable(Screen.Terms.route) {
                 TermsScreen({navController.popBackStack()})
+            }
+            composable(Screen.BusinessDetails.route) {
+                BusinessDetailsScreen({navController.popBackStack()}, {})
             }
             composable(Screen.Register.route) {
                 RegisterScreen(
