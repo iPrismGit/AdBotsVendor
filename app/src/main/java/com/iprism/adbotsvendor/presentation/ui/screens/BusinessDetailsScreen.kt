@@ -18,16 +18,18 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,10 +56,13 @@ import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusinessDetailsScreen(onBack :() -> Unit, onContinueClick :() -> Unit) {
+fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
@@ -65,7 +70,7 @@ fun BusinessDetailsScreen(onBack :() -> Unit, onContinueClick :() -> Unit) {
     var selectedCity by rememberSaveable { mutableStateOf<Gender?>(null) }
     var selectedArea by rememberSaveable { mutableStateOf<Gender?>(null) }
     var selectedBusinessCat by rememberSaveable { mutableStateOf<Gender?>(null) }
-    
+
     var showDatePickerSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
@@ -193,13 +198,62 @@ fun BusinessDetailsScreen(onBack :() -> Unit, onContinueClick :() -> Unit) {
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
         ) {
-            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
+            Text(
+                "Continue",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseDatesContent(onContinue: () -> Unit) {
+    var startDate by remember { mutableStateOf<Long?>(null) }
+    var endDate by remember { mutableStateOf<Long?>(null) }
+
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
+    val dateFormatter = remember { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) }
+
+    if (showStartDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    startDate = datePickerState.selectedDateMillis
+                    showStartDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    if (showEndDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    endDate = datePickerState.selectedDateMillis
+                    showEndDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,12 +274,18 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "Start Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
                 Spacer(modifier = Modifier.height(12.dp))
-                DateSelectorBox(onClick = { /* Pick Start Date */ })
+                DateSelectorBox(
+                    text = startDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
+                    onClick = { showStartDatePicker = true }
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "End Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
                 Spacer(modifier = Modifier.height(12.dp))
-                DateSelectorBox(onClick = { /* Pick End Date */ })
+                DateSelectorBox(
+                    text = endDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
+                    onClick = { showEndDatePicker = true }
+                )
             }
         }
 
@@ -234,26 +294,26 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
         Button(
             onClick = onContinue,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFEEEEEE),
-                contentColor = Color.LightGray
+                containerColor = if (startDate != null && endDate != null) DarkBlue else Color(0xFFEEEEEE),
+                contentColor = if (startDate != null && endDate != null) Color.White else Color.LightGray
             )
         ) {
             Text(
                 text = "Continue",
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(8.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @Composable
-fun DateSelectorBox(onClick: () -> Unit) {
+fun DateSelectorBox(text: String, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,7 +328,13 @@ fun DateSelectorBox(onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Choose", fontFamily = MontserratFamily, fontWeight = FontWeight.Normal, color = BLACK1, fontSize = 12.sp)
+            Text(
+                text = text,
+                fontFamily = MontserratFamily,
+                fontWeight = FontWeight.Normal,
+                color = if (text == "Choose") BLACK1 else Color.Black,
+                fontSize = 12.sp
+            )
             Icon(
                 painter = painterResource(R.drawable.calender_img),
                 contentDescription = null,
