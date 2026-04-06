@@ -233,7 +233,7 @@ fun PreviewScreen(navController: NavHostController) {
 
         // Continue Button
         Button(
-            onClick = { /* Handle Continue */ },
+            onClick = { navController.navigate("home") },
             modifier = Modifier
                 .fillMaxWidth().padding(12.dp),
             shape = RoundedCornerShape(12.dp),

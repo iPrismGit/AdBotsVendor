@@ -173,7 +173,7 @@ fun HomeScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* View More */ },
+                    onClick = { navController.navigate("analytics") },
                     modifier = Modifier
                         .weight(1f),
                     shape = RoundedCornerShape(12.dp),
