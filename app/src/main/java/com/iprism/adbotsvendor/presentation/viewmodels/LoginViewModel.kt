@@ -29,27 +29,15 @@ class LoginViewModel @Inject constructor(private val repository: AuthRepository)
         data class Error(val message: String) : LoginEvent()
     }
 
-    fun login(mobile: String) {
-        if (mobile.length != 10) {
-            viewModelScope.launch { _event.emit(LoginEvent.Error("Invalid mobile number")) }
-            return
-        }
-
+    fun login(request: LoginRequest) {
         viewModelScope.launch {
             _loginResponse.value = UiState.Loading
             try {
-                val request = LoginRequest(
-                    playerId = "",
-                    appVersion = "1.0",
-                    mobile = mobile,
-                    otpConfirmed = "no",
-                    token = "token"
-                )
                 Log.d("requestLoading", request.toString())
                 val response = repository.login(request)
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
-                    _event.emit(LoginEvent.NavigateToOtp(response.response.otp, mobile))
+                    _event.emit(LoginEvent.NavigateToOtp(response.response.otp, request.mobile))
                 } else {
                     _loginResponse.value = UiState.Error(response.message)
                     _event.emit(LoginEvent.Error(response.message))

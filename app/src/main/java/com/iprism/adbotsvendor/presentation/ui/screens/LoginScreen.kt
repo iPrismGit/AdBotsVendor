@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.data.models.LoginRequest
 import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
@@ -153,7 +154,14 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (mobileNumber.length == 10) {
-                            viewModel.login(mobileNumber)
+                            val request = LoginRequest(
+                                playerId = "",
+                                appVersion = "1.0",
+                                mobile = mobileNumber,
+                                otpConfirmed = "no",
+                                token = "token"
+                            )
+                            viewModel.login(request)
                         } else {
                             Toast.makeText(context, "Please enter 10 digit mobile number", Toast.LENGTH_SHORT).show()
                         }
