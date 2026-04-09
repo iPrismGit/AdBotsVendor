@@ -76,7 +76,7 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "+91 $mobile (OTP: $otp)",
+                    text = "+91 $mobile",
                     style = MaterialTheme.typography.titleMedium,
                     color = Grey
                 )
