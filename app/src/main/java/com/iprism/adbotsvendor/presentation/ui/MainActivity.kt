@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.iprism.adbotsvendor.navigation.AppNavHost
 import com.iprism.adbotsvendor.presentation.ui.theme.AdBotsVendorTheme
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
