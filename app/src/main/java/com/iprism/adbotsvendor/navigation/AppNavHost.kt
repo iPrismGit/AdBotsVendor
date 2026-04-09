@@ -98,7 +98,7 @@ fun AppNavHost(
                 TermsScreen({navController.popBackStack()})
             }
             composable(Screen.BusinessDetails.route) {
-                BusinessDetailsScreen({navController.popBackStack()}, {navController.navigate("preview")})
+                BusinessDetailsScreen({navController.popBackStack()}, {navController.navigate(Screen.Preview.route)})
             }
             composable(Screen.Preview.route) {
                 PreviewScreen(navController)
