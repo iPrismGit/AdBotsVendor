@@ -27,7 +27,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.LightBlack
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 
 @Composable
-fun OtpScreen(navController: NavHostController) {
+fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String = "") {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +76,7 @@ fun OtpScreen(navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "918978676356",
+                    text = "+91 $mobile (OTP: $otp)",
                     style = MaterialTheme.typography.titleMedium,
                     color = Grey
                 )

@@ -1,5 +1,7 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,22 +15,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
-import com.iprism.adbotsvendor.navigation.Screen
 import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
+import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
+import com.iprism.adbotsvendor.utils.UiState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(onContinueClick: () -> Unit) {
-
+fun LoginScreen(
+    onNavigateToOtp: (otp: String, mobile: String) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
     var mobileNumber by rememberSaveable { mutableStateOf("") }
+    val loginState by viewModel.loginResponse.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest { event ->
+            when (event) {
+                is LoginViewModel.LoginEvent.NavigateToOtp -> {
+                    onNavigateToOtp(event.otp, event.mobile)
+                    Toast.makeText(context, event.otp, Toast.LENGTH_SHORT).show()
+                }
+                is LoginViewModel.LoginEvent.Error -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -127,19 +149,36 @@ fun LoginScreen(onContinueClick: () -> Unit) {
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+
                 Button(
-                    onClick = { onContinueClick() },
+                    onClick = {
+                        if (mobileNumber.length == 10) {
+                            viewModel.login(mobileNumber)
+                        } else {
+                            Toast.makeText(context, "Please enter 10 digit mobile number", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     modifier = Modifier
-                        .fillMaxWidth().imePadding(),
+                        .fillMaxWidth()
+                        .imePadding(),
+                    enabled = loginState !is UiState.Loading,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
-                    Text(
-                        text = "Continue",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White,
-                        modifier = Modifier.padding(8.dp),
-                    )
+                    if (loginState is UiState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Continue",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(8.dp),
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsvendor.data.models.LoginApiResponse
@@ -24,22 +25,38 @@ class LoginViewModel @Inject constructor(private val repository: AuthRepository)
     val event = _event.asSharedFlow()
 
     sealed class LoginEvent {
-        object NavigateHome : LoginEvent()
+        data class NavigateToOtp(val otp: String, val mobile: String) : LoginEvent()
+        data class Error(val message: String) : LoginEvent()
     }
 
-    fun login(request: LoginRequest) {
+    fun login(mobile: String) {
+        if (mobile.length != 10) {
+            viewModelScope.launch { _event.emit(LoginEvent.Error("Invalid mobile number")) }
+            return
+        }
+
         viewModelScope.launch {
             _loginResponse.value = UiState.Loading
             try {
+                val request = LoginRequest(
+                    playerId = "",
+                    appVersion = "1.0",
+                    mobile = mobile,
+                    otpConfirmed = "no",
+                    token = "token"
+                )
+                Log.d("requestLoading", request.toString())
                 val response = repository.login(request)
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
-                    _event.emit(LoginEvent.NavigateHome)
+                    _event.emit(LoginEvent.NavigateToOtp(response.response.otp, mobile))
                 } else {
                     _loginResponse.value = UiState.Error(response.message)
+                    _event.emit(LoginEvent.Error(response.message))
                 }
             } catch (e: Exception) {
                 _loginResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                _event.emit(LoginEvent.Error(e.localizedMessage ?: "Unknown error"))
             }
         }
     }

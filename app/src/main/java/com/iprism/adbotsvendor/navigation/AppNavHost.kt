@@ -58,10 +58,14 @@ fun AppNavHost(
                 SplashScreen(navController)
             }
             composable(Screen.Login.route) {
-                LoginScreen({ navController.navigate(Screen.Otp.route) })
+                LoginScreen(onNavigateToOtp = { otp, mobile ->
+                    navController.navigate("${Screen.Otp.route}/$otp/$mobile")
+                })
             }
-            composable(Screen.Otp.route) {
-                OtpScreen(navController)
+            composable("${Screen.Otp.route}/{otp}/{mobile}") { backStackEntry ->
+                val otp = backStackEntry.arguments?.getString("otp") ?: ""
+                val mobile = backStackEntry.arguments?.getString("mobile") ?: ""
+                OtpScreen(navController, otp, mobile)
             }
             composable(Screen.Home.route) {
                 HomeScreen(navController)

@@ -17,7 +17,10 @@ data class LoginApiResponse(
 data class Response(
 
 	@field:SerializedName("user_details")
-	val userDetails: UserDetails
+	val userDetails: UserDetails,
+
+	@field:SerializedName("otp")
+	val otp: String,
 )
 
 data class UserDetails(
