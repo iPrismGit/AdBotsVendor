@@ -65,7 +65,19 @@ fun AppNavHost(
             composable("${Screen.Otp.route}/{otp}/{mobile}") { backStackEntry ->
                 val otp = backStackEntry.arguments?.getString("otp") ?: ""
                 val mobile = backStackEntry.arguments?.getString("mobile") ?: ""
-                OtpScreen(navController, otp, mobile)
+                OtpScreen(
+                    otp = otp,
+                    mobile = mobile,
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onNavigateToRegister = {
+                        navController.navigate(Screen.Register.route)
+                    },
+                    onNavigateToHome = {
+                        navController.navigate(Screen.Home.route)
+                    },
+                )
             }
             composable(Screen.Home.route) {
                 HomeScreen(navController)
@@ -89,16 +101,18 @@ fun AppNavHost(
                 WalletHistoryScreen(navController)
             }
             composable(Screen.ContactUs.route) {
-                ContactUsScreen({navController.popBackStack()},{ navController.popBackStack()})
+                ContactUsScreen({ navController.popBackStack() }, { navController.popBackStack() })
             }
             composable(Screen.AboutUs.route) {
-                AboutUsScreen({navController.popBackStack()})
+                AboutUsScreen({ navController.popBackStack() })
             }
             composable(Screen.Terms.route) {
-                TermsScreen({navController.popBackStack()})
+                TermsScreen({ navController.popBackStack() })
             }
             composable(Screen.BusinessDetails.route) {
-                BusinessDetailsScreen({navController.popBackStack()}, {navController.navigate(Screen.Preview.route)})
+                BusinessDetailsScreen(
+                    { navController.popBackStack() },
+                    { navController.navigate(Screen.Preview.route) })
             }
             composable(Screen.Preview.route) {
                 PreviewScreen(navController)

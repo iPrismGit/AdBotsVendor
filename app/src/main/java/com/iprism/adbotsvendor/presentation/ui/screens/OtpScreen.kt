@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,8 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.data.models.LoginRequest
 import com.iprism.adbotsvendor.navigation.Screen
 import com.iprism.adbotsvendor.presentation.ui.components.OTPView
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
@@ -28,11 +32,37 @@ import com.iprism.adbotsvendor.presentation.ui.theme.Green
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey
 import com.iprism.adbotsvendor.presentation.ui.theme.LightBlack
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
+import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.OtpViewModel
+import com.iprism.adbotsvendor.utils.UiState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String = "") {
+fun OtpScreen(
+    otp: String = "",
+    mobile: String = "",
+    onBack : () -> Unit,
+    onNavigateToRegister : () -> Unit,
+    onNavigateToHome : () -> Unit,
+    viewModel: OtpViewModel = hiltViewModel()
+) {
     var enteredOtp by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
+    val state by viewModel.loginResponse.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is OtpViewModel.UiEvent.NavigateToRegister -> {
+                    onNavigateToRegister()
+                }
+                is OtpViewModel.UiEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,7 +70,7 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
             .statusBarsPadding()
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { onBack() },
             modifier = Modifier.padding(start = 8.dp)
         ) {
             Icon(
@@ -126,7 +156,14 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
                 Button(
                     onClick = {
                         if (otp == enteredOtp) {
-                            navController.navigate(Screen.Register.route)
+                            val request = LoginRequest(
+                                playerId = "",
+                                appVersion = "",
+                                mobile = mobile,
+                                otpConfirmed = "yes",
+                                token = "token"
+                            )
+                            viewModel.login(request)
                         } else {
                             Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
                         }
@@ -135,14 +172,23 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
                         .fillMaxWidth()
                         .imePadding(),
                     shape = RoundedCornerShape(12.dp),
+                    enabled = state !is UiState.Loading,
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
-                    Text(
-                        text = "Continue",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White,
-                        modifier = Modifier.padding(8.dp)
-                    )
+                    if (state is UiState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Continue",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(8.dp),
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

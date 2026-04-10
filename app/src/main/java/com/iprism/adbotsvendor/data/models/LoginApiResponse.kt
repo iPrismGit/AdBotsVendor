@@ -83,5 +83,8 @@ data class UserDetails(
 	val authToken: String,
 
 	@field:SerializedName("status")
-	val status: String
+	val status: String,
+
+	@field:SerializedName("registartionStatus")
+	val registartionStatus: String
 )
