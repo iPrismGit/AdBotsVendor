@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,10 +9,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,6 +31,8 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 
 @Composable
 fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String = "") {
+    var enteredOtp by rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +66,11 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .border(1.dp, Color(0xFFF5F5F5), RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                .border(
+                    1.dp,
+                    Color(0xFFF5F5F5),
+                    RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                ),
             color = Color.White
         ) {
             Column(
@@ -81,7 +90,9 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
                     color = Grey
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                OTPView(4) { }
+                OTPView(4) {
+                    enteredOtp = it
+                }
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -113,9 +124,16 @@ fun OtpScreen(navController: NavHostController, otp: String = "", mobile: String
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
-                    onClick = { navController.navigate(Screen.Register.route) },
+                    onClick = {
+                        if (otp == enteredOtp) {
+                            navController.navigate(Screen.Register.route)
+                        } else {
+                            Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     modifier = Modifier
-                        .fillMaxWidth().imePadding(),
+                        .fillMaxWidth()
+                        .imePadding(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
