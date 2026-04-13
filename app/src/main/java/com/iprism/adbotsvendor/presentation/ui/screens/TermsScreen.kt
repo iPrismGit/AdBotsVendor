@@ -34,13 +34,14 @@ import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
 fun TermsScreen(
+    type: String,
     onBack: () -> Unit,
     viewModel: ContentPagesViewModel = hiltViewModel()
 ) {
     val state by viewModel.response.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.register(ContentPagesRequest(viewType = "terms"))
+        viewModel.register(ContentPagesRequest(viewType = type))
     }
 
     Column(
@@ -66,7 +67,13 @@ fun TermsScreen(
                 .padding(12.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text("Terms & Conditions", style = MaterialTheme.typography.headlineMedium)
+            val title = when (type) {
+                "terms" -> "Terms & Conditions"
+                "privacy" -> "Privacy Policy"
+                "about_us" -> "About Us"
+                else -> "Content"
+            }
+            Text(title, style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(16.dp))
 
             when (state) {

@@ -106,8 +106,12 @@ fun AppNavHost(
             composable(Screen.AboutUs.route) {
                 AboutUsScreen({ navController.popBackStack() })
             }
-            composable(Screen.Terms.route) {
-                TermsScreen({ navController.popBackStack() })
+            composable(Screen.Terms.route) { backStackEntry ->
+                val type = backStackEntry.arguments?.getString("type") ?: ""
+                TermsScreen(
+                    type = type,
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable(Screen.BusinessDetails.route) {
                 BusinessDetailsScreen(

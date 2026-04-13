@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.navigation.Screen
 import com.iprism.adbotsvendor.presentation.ui.components.DottedDivider
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
@@ -125,11 +126,20 @@ fun ProfileScreen(navController: NavHostController) {
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
                     title = "Terms & Conditions",
-                    navigate = {navController.navigate("terms")}
+                    navigate = { navController.navigate(Screen.Terms.createRoute("terms")) }
                 )
                 DottedDivider()
-                ProfileOptionItem(icon = painterResource(R.drawable.terms_img), title = "About Us",
-                    navigate = {navController.navigate("about_us")})
+                ProfileOptionItem(
+                    icon = painterResource(R.drawable.terms_img),
+                    title = "About Us",
+                    navigate = { navController.navigate(Screen.Terms.createRoute("about_us")) }
+                )
+                DottedDivider()
+                ProfileOptionItem(
+                    icon = painterResource(R.drawable.terms_img),
+                    title = "Privacy Policy",
+                    navigate = { navController.navigate(Screen.Terms.createRoute("privacy")) }
+                )
             }
         }
 
