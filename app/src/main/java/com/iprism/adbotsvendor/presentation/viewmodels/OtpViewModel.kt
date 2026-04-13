@@ -6,20 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsvendor.data.models.LoginApiResponse
 import com.iprism.adbotsvendor.data.models.LoginRequest
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
-import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel.LoginEvent
+import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OtpViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
+class OtpViewModel @Inject constructor(
+    private val repository: AuthRepository,
+    private val dataStoreManager: DataStoreManager
+) : ViewModel() {
 
     private val _loginResponse = MutableStateFlow<UiState<LoginApiResponse>>(UiState.Idle)
     val loginResponse: StateFlow<UiState<LoginApiResponse>> = _loginResponse
@@ -40,7 +41,13 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
                 val response = repository.login(request)
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
-                    if (response.response.userDetails.registartionStatus.equals("yes", true)) {
+                    val user = response.response.userDetails
+                    if (user.registartionStatus.equals("yes", true)) {
+                        dataStoreManager.saveUser(
+                            userId = user.id,
+                            userName = user.name,
+                            token = user.authToken
+                        )
                         _eventFlow.send(UiEvent.NavigateToHome)
                     } else {
                         _eventFlow.send(UiEvent.NavigateToRegister)
@@ -52,11 +59,5 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
                 _loginResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
-    }
-}
-
-fun isValidMobile(mobile : String) {
-    if (mobile.length != 10) {
-
     }
 }
