@@ -9,10 +9,12 @@ import com.iprism.adbotsvendor.data.repositories.AuthRepository
 import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel.LoginEvent
 import com.iprism.adbotsvendor.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,8 +24,8 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
     private val _loginResponse = MutableStateFlow<UiState<LoginApiResponse>>(UiState.Idle)
     val loginResponse: StateFlow<UiState<LoginApiResponse>> = _loginResponse
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = Channel<UiEvent>()
+    val eventFlow = _eventFlow.receiveAsFlow()
 
     sealed class UiEvent {
         object NavigateToRegister : UiEvent()
@@ -39,9 +41,9 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
                     if (response.response.userDetails.registartionStatus.equals("yes", true)) {
-                        _eventFlow.emit(UiEvent.NavigateToHome)
+                        _eventFlow.send(UiEvent.NavigateToRegister)
                     } else {
-                        _eventFlow.emit(UiEvent.NavigateToRegister)
+                        _eventFlow.send(UiEvent.NavigateToHome)
                     }
                 } else {
                     _loginResponse.value = UiState.Error(response.message)
