@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.components
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -19,6 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Gender(
+    val name : String,
+    val id : Int
+) : Parcelable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,8 +82,3 @@ fun CustomSpinner(
         }
     }
 }
-
-data class Gender(
-    val name : String,
-    val id : Int
-)

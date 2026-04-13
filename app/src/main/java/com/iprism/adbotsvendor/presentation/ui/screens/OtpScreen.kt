@@ -37,7 +37,6 @@ import com.iprism.adbotsvendor.presentation.viewmodels.OtpViewModel
 import com.iprism.adbotsvendor.utils.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Locale
 
 @Composable
 fun OtpScreen(
@@ -61,7 +60,7 @@ fun OtpScreen(
             while (timeLeft > 0) {
                 delay(1000L)
                 timeLeft--
-                timerText = String.format(Locale.US, "00:%02d", timeLeft)
+                timerText = String.format("00:%02d", timeLeft)
             }
             isResendEnabled = true
         }
