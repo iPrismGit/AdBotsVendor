@@ -33,7 +33,7 @@ import com.iprism.adbotsvendor.presentation.viewmodels.ContentPagesViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun TermsScreen(
+fun ContentPageScreen(
     type: String,
     onBack: () -> Unit,
     viewModel: ContentPagesViewModel = hiltViewModel()

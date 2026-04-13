@@ -126,19 +126,19 @@ fun ProfileScreen(navController: NavHostController) {
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
                     title = "Terms & Conditions",
-                    navigate = { navController.navigate(Screen.Terms.createRoute("terms")) }
+                    navigate = { navController.navigate(Screen.ContentPage.createRoute("terms")) }
                 )
                 DottedDivider()
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
                     title = "About Us",
-                    navigate = { navController.navigate(Screen.Terms.createRoute("about_us")) }
+                    navigate = { navController.navigate(Screen.ContentPage.createRoute("about_us")) }
                 )
                 DottedDivider()
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.terms_img),
                     title = "Privacy Policy",
-                    navigate = { navController.navigate(Screen.Terms.createRoute("privacy")) }
+                    navigate = { navController.navigate(Screen.ContentPage.createRoute("privacy")) }
                 )
             }
         }
