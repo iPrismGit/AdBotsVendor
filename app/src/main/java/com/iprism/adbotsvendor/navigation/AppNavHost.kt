@@ -70,11 +70,12 @@ fun AppNavHost(
                     onBack = {
                         navController.popBackStack()
                     },
-                    onNavigateToRegister = {
-                        navController.navigate(Screen.Register.route)
+                    onNavigateToRegister = {                        navController.navigate(Screen.Register.route)
                     },
                     onNavigateToHome = {
-                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
                     },
                 )
             }
