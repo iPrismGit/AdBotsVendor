@@ -3,9 +3,11 @@ package com.iprism.adbotsvendor.utils
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.iprism.adbotsvendor.data.models.User
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,6 +23,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext private val conte
         val USER_ID = stringPreferencesKey("user_id")
         val USER_NAME = stringPreferencesKey("user_name")
         val TOKEN = stringPreferencesKey("token")
+        val IS_LOGIN = booleanPreferencesKey("is_login")
     }
 
     suspend fun saveUser(userId: String, userName: String, token: String) {
@@ -31,16 +34,21 @@ class DataStoreManager @Inject constructor(@ApplicationContext private val conte
         }
     }
 
-    val userId: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[USER_ID]
+    suspend fun loginUser() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_LOGIN] = true
+        }
     }
 
-    val userName: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[USER_NAME]
-    }
 
-    val token: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[TOKEN]
+
+    val userDetails: Flow<User> = context.dataStore.data.map { pref ->
+        User(
+            userId = pref[USER_ID],
+            userName = pref[USER_NAME],
+            token = pref[TOKEN],
+            isLogin = pref[IS_LOGIN] ?: false
+        )
     }
 
     suspend fun clearData() {

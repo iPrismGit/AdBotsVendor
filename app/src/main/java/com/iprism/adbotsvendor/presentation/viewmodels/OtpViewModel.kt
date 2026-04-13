@@ -48,6 +48,7 @@ class OtpViewModel @Inject constructor(
                             userName = user.name,
                             token = user.authToken
                         )
+                        dataStoreManager.loginUser()
                         _eventFlow.send(UiEvent.NavigateToHome)
                     } else {
                         _eventFlow.send(UiEvent.NavigateToRegister)
