@@ -42,12 +42,12 @@ class OtpViewModel @Inject constructor(
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
                     val user = response.response.userDetails
+                    dataStoreManager.saveUser(
+                        userId = user.id,
+                        userName = user.name,
+                        token = user.authToken
+                    )
                     if (user.registartionStatus.equals("yes", true)) {
-                        dataStoreManager.saveUser(
-                            userId = user.id,
-                            userName = user.name,
-                            token = user.authToken
-                        )
                         dataStoreManager.loginUser()
                         _eventFlow.send(UiEvent.NavigateToHome)
                     } else {
