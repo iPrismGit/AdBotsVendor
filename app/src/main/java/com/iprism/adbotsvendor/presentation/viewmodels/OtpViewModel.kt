@@ -41,9 +41,9 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
                     if (response.response.userDetails.registartionStatus.equals("yes", true)) {
-                        _eventFlow.send(UiEvent.NavigateToRegister)
-                    } else {
                         _eventFlow.send(UiEvent.NavigateToHome)
+                    } else {
+                        _eventFlow.send(UiEvent.NavigateToRegister)
                     }
                 } else {
                     _loginResponse.value = UiState.Error(response.message)
