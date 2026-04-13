@@ -35,6 +35,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.OtpViewModel
 import com.iprism.adbotsvendor.utils.UiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -49,6 +50,21 @@ fun OtpScreen(
     var enteredOtp by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
     val state by viewModel.loginResponse.collectAsStateWithLifecycle()
+
+    var timerText by remember { mutableStateOf("00:30") }
+    var isResendEnabled by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = isResendEnabled) {
+        if (!isResendEnabled) {
+            var timeLeft = 30
+            while (timeLeft > 0) {
+                delay(1000L)
+                timeLeft--
+                timerText = String.format("00:%02d", timeLeft)
+            }
+            isResendEnabled = true
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
@@ -137,15 +153,18 @@ fun OtpScreen(
                         )
                         Text(
                             text = "Resend",
-                            color = Green,
+                            color = if (isResendEnabled) Green else Color.Gray,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
-                            modifier = Modifier.clickable { /* Resend logic */ }
+                            modifier = Modifier.clickable(enabled = isResendEnabled) {
+                                isResendEnabled = false
+                                /* Resend logic */
+                            }
                         )
                     }
                     Text(
-                        text = "00:26",
+                        text = timerText,
                         style = MaterialTheme.typography.bodySmall,
                         color = LightBlack
                     )

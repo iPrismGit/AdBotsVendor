@@ -52,3 +52,9 @@ class OtpViewModel @Inject constructor(private val repository: AuthRepository) :
         }
     }
 }
+
+fun isValidMobile(mobile : String) {
+    if (mobile.length != 10) {
+
+    }
+}
