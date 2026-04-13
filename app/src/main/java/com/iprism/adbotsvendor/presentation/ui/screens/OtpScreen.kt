@@ -22,17 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.LoginRequest
-import com.iprism.adbotsvendor.navigation.Screen
 import com.iprism.adbotsvendor.presentation.ui.components.OTPView
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.Green
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey
 import com.iprism.adbotsvendor.presentation.ui.theme.LightBlack
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.OtpViewModel
 import com.iprism.adbotsvendor.utils.UiState
 import kotlinx.coroutines.delay

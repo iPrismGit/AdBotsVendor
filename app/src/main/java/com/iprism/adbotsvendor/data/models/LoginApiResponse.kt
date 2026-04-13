@@ -85,6 +85,6 @@ data class UserDetails(
 	@field:SerializedName("status")
 	val status: String,
 
-	@field:SerializedName("registartionStatus")
+	@field:SerializedName("registartion_status")
 	val registartionStatus: String
 )

@@ -42,6 +42,7 @@ class OtpViewModel @Inject constructor(
                 if (response.status) {
                     _loginResponse.value = UiState.Success(response)
                     val user = response.response.userDetails
+                    Log.d("requestLoading", response.response.userDetails.toString())
                     dataStoreManager.saveUser(
                         userId = user.id,
                         userName = user.name,
