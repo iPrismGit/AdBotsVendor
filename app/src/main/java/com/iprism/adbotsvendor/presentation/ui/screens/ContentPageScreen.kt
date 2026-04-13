@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,59 +39,63 @@ fun ContentPageScreen(
     viewModel: ContentPagesViewModel = hiltViewModel()
 ) {
     val state by viewModel.response.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.register(ContentPagesRequest(viewType = type))
     }
+    LaunchedEffect(state) {
+        if (state is UiState.Error) {
+            Toast.makeText(
+                context,
+                (state as UiState.Error).message ?: "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
+    Column(
+        modifier = Modifier.fillMaxSize().statusBarsPadding()
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+        IconButton(
+            onClick = { onBack() },
+            modifier = Modifier.padding(start = 8.dp)
         ) {
-            IconButton(
-                onClick = { onBack() },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.back_img),
-                    contentDescription = "Back",
-                    tint = BLACK,
-                    modifier = Modifier.size(28.dp)
+            Icon(
+                painter = painterResource(R.drawable.back_img),
+                contentDescription = "Back",
+                tint = BLACK,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(12.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            val title = when (type) {
+                "terms" -> "Terms & Conditions"
+                "privacy" -> "Privacy Policy"
+                "about_us" -> "About Us"
+                else -> "Content"
+            }
+            Text(title, style = MaterialTheme.typography.headlineMedium)
+            Spacer(Modifier.height(16.dp))
+
+            if (state is UiState.Success) {
+                val content = (state as UiState.Success).data.response.firstOrNull()?.content
+                    ?: "No content available"
+                Text(
+                    text = content,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(12.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                val title = when (type) {
-                    "terms" -> "Terms & Conditions"
-                    "privacy" -> "Privacy Policy"
-                    "about_us" -> "About Us"
-                    else -> "Content"
-                }
-                Text(title, style = MaterialTheme.typography.headlineMedium)
-                Spacer(Modifier.height(16.dp))
-
-                if (state is UiState.Success) {
-                    val content = (state as UiState.Success).data.response.firstOrNull()?.content
-                        ?: "No content available"
-                    Text(
-                        text = content,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
         }
+    }
 
-        if (state is UiState.Loading) {
-            LoadingScreen()
-        }
+    if (state is UiState.Loading) {
+        LoadingScreen()
     }
 }
