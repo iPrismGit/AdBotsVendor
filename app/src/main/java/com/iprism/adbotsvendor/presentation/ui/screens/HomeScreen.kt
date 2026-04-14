@@ -2,7 +2,6 @@ package com.iprism.adbotsvendor.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +10,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,10 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.data.models.home.BannersItem
 import com.iprism.adbotsvendor.presentation.ui.components.Banners
-import com.iprism.adbotsvendor.presentation.ui.components.WelcomeBanner
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue1
@@ -31,9 +36,29 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.Red
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 import com.iprism.adbotsvendor.presentation.viewmodels.HomeViewModel
+import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
 fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
+
+    val state by  homeViewModel.response.collectAsStateWithLifecycle()
+    var banners by remember { mutableStateOf<List<BannersItem>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        homeViewModel.fetchHomePage()
+    }
+    LaunchedEffect(state) {
+        when(state) {
+            is UiState.Success -> {
+                banners = (state as UiState.Success).data.response.banners
+            }
+            is UiState.Error -> {
+            }
+            is UiState.Loading -> {
+            }
+            else -> {}
+        }
+    }
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -212,14 +237,6 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            val banners = listOf(
-                WelcomeBanner(
-                    com.iprism.adbotsvendor.R.drawable.img
-                ),
-                WelcomeBanner(
-                    com.iprism.adbotsvendor.R.drawable.img
-                ),
-            )
             Banners(banners)
             Spacer(modifier = Modifier.height(16.dp))
         }

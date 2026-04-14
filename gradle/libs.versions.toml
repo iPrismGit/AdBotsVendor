@@ -15,6 +15,7 @@ ksp = "2.1.0-1.0.29"
 retrofit = "2.9.0"
 coil = "2.7.0"
 datastore = "1.1.2"
+benchmarkCommon = "1.4.1"
 
 [libraries]
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
@@ -39,6 +40,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-benchmark-common = { group = "androidx.benchmark", name = "benchmark-common", version.ref = "benchmarkCommon" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

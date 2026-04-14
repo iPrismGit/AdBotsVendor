@@ -9,23 +9,30 @@ import com.iprism.adbotsvendor.data.models.home.HomePageApiResponse
 import com.iprism.adbotsvendor.data.models.home.HomePageRequest
 import com.iprism.adbotsvendor.data.repositories.CommonRepository
 import com.iprism.adbotsvendor.data.repositories.SettingsRepository
+import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: CommonRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(private val repository: CommonRepository, private val dataStoreManager: DataStoreManager) : ViewModel() {
 
     private val _response = MutableStateFlow<UiState<HomePageApiResponse>>(UiState.Idle)
     val response: StateFlow<UiState<HomePageApiResponse>> = _response
 
-    fun register(request: HomePageRequest) {
+    fun fetchHomePage() {
         viewModelScope.launch {
             _response.value = UiState.Loading
             try {
+                val user = dataStoreManager.userDetails.first()
+                val request = HomePageRequest(
+                    userId = user.userId?.toIntOrNull() ?: 0,
+                    authToken = user.token ?: ""
+                )
                 Log.d("requestLoading", request.toString())
                 val response = repository.fetchHomePage(request)
                 if (response.status) {
