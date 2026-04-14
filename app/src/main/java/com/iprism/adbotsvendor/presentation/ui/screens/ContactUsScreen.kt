@@ -27,17 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iprism.adbotsvendor.R
-import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
-import com.iprism.adbotsvendor.presentation.ui.components.Gender
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.Green
 import com.iprism.adbotsvendor.presentation.ui.theme.Teal
 

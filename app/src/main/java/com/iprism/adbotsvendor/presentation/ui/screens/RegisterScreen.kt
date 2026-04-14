@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -39,7 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
-import com.iprism.adbotsvendor.presentation.ui.components.Gender
+import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
@@ -56,12 +57,28 @@ fun RegisterScreen(
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
     var mobileNumber by rememberSaveable { mutableStateOf("") }
-    var selectedCity by rememberSaveable { mutableStateOf<Gender?>(null) }
-    var selectedArea by rememberSaveable { mutableStateOf<Gender?>(null) }
-    var selectedBusinessCat by rememberSaveable { mutableStateOf<Gender?>(null) }
+    var selectedCity by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
+    var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
+    var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
 
     val context = LocalContext.current
     val registerState by viewModel.registerResponse.collectAsStateWithLifecycle()
+    val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
+
+    var cityList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
+    var categoryList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchDropDowns()
+    }
+
+    LaunchedEffect(dropDownsState) {
+        if (dropDownsState is UiState.Success) {
+            val data = (dropDownsState as UiState.Success).data.response
+            cityList = data.cities.map { SpinnerItem(it.cityName, it.id.toIntOrNull() ?: 0) }
+            categoryList = data.categories.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
@@ -140,7 +157,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(12.dp))
             CustomSpinner(
                 label = stringResource(R.string.choose),
-                items = cities,
+                items = cityList,
                 selectedItem = selectedCity,
                 onItemSelected = {
                     selectedCity = it
@@ -151,7 +168,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(12.dp))
             CustomSpinner(
                 label = stringResource(R.string.choose),
-                items = cities,
+                items = cityList, // Fallback or update when areas are fetched
                 selectedItem = selectedArea,
                 onItemSelected = {
                     selectedArea = it
@@ -162,7 +179,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(12.dp))
             CustomSpinner(
                 label = stringResource(R.string.choose),
-                items = cities,
+                items = categoryList,
                 selectedItem = selectedBusinessCat,
                 onItemSelected = {
                     selectedBusinessCat = it
@@ -205,12 +222,6 @@ fun RegisterScreen(
         }
     }
 }
-
-private val cities = listOf(
-    Gender("Hyderabad", 1),
-    Gender("Bengaluru", 2),
-    Gender("Vizag", 3),
-)
 
 @Preview(showBackground = true)
 @Composable

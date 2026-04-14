@@ -3,6 +3,8 @@ package com.iprism.adbotsvendor.presentation.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
+import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
 import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
 import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
@@ -26,12 +28,38 @@ class RegisterViewModel @Inject constructor(
     private val _registerResponse = MutableStateFlow<UiState<RegisterApiResponse>>(UiState.Idle)
     val registerResponse: StateFlow<UiState<RegisterApiResponse>> = _registerResponse
 
+    private val _dropDownsResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
+    val dropDownsResponse: StateFlow<UiState<DropDownsApiResponse>> = _dropDownsResponse
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
         object NavigateToHome : UiEvent()
+    }
+
+    fun fetchDropDowns() {
+        viewModelScope.launch {
+            _dropDownsResponse.value = UiState.Loading
+            try {
+                val user = dataStoreManager.userDetails.first()
+                val request = DropDownsRequest(
+                    userId = user.userId?.toIntOrNull() ?: 0,
+                    viewType = "view",
+                    authToken = user.token ?: "",
+                    cityId = ""
+                )
+                val response = repository.fetchDropDowns(request)
+                if (response.status) {
+                    _dropDownsResponse.value = UiState.Success(response)
+                } else {
+                    _dropDownsResponse.value = UiState.Error(response.message)
+                }
+            } catch (e: Exception) {
+                _dropDownsResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            }
+        }
     }
 
     fun registerUser(

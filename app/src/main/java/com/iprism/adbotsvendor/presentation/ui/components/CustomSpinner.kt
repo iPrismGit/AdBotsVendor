@@ -23,7 +23,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Gender(
+data class SpinnerItem(
     val name : String,
     val id : Int
 ) : Parcelable
@@ -32,9 +32,9 @@ data class Gender(
 @Composable
 fun CustomSpinner(
     label: String,
-    items: List<Gender>,
-    selectedItem: Gender?,
-    onItemSelected: (Gender) -> Unit,
+    items: List<SpinnerItem>,
+    selectedItem: SpinnerItem?,
+    onItemSelected: (SpinnerItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
 

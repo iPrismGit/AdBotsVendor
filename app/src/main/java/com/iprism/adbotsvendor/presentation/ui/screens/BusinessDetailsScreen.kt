@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
-import com.iprism.adbotsvendor.presentation.ui.components.Gender
+import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
@@ -70,9 +70,9 @@ fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
     var mobileNumber by rememberSaveable { mutableStateOf("") }
-    var selectedCity by rememberSaveable { mutableStateOf<Gender?>(null) }
-    var selectedArea by rememberSaveable { mutableStateOf<Gender?>(null) }
-    var selectedBusinessCat by rememberSaveable { mutableStateOf<Gender?>(null) }
+    var selectedCity by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
+    var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
+    var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
@@ -456,7 +456,7 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
 }
 
 private val cities = listOf(
-    Gender("Hyderabad", 1),
-    Gender("Bengaluru", 2),
-    Gender("Vizag", 3),
+    SpinnerItem("Hyderabad", 1),
+    SpinnerItem("Bengaluru", 2),
+    SpinnerItem("Vizag", 3),
 )
