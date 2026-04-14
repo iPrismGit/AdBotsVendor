@@ -31,6 +31,9 @@ class RegisterViewModel @Inject constructor(
     private val _dropDownsResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
     val dropDownsResponse: StateFlow<UiState<DropDownsApiResponse>> = _dropDownsResponse
 
+    private val _areasResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
+    val areasResponse: StateFlow<UiState<DropDownsApiResponse>> = _areasResponse
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -58,6 +61,29 @@ class RegisterViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _dropDownsResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            }
+        }
+    }
+
+    fun fetchAreas(cityId: String) {
+        viewModelScope.launch {
+            _areasResponse.value = UiState.Loading
+            try {
+                val user = dataStoreManager.userDetails.first()
+                val request = DropDownsRequest(
+                    userId = user.userId?.toIntOrNull() ?: 0,
+                    viewType = "view_area",
+                    authToken = user.token ?: "",
+                    cityId = cityId
+                )
+                val response = repository.fetchDropDowns(request)
+                if (response.status) {
+                    _areasResponse.value = UiState.Success(response)
+                } else {
+                    _areasResponse.value = UiState.Error(response.message)
+                }
+            } catch (e: Exception) {
+                _areasResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

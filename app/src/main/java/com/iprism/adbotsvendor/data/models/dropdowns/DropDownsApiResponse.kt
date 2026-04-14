@@ -55,6 +55,9 @@ data class AreasItem(
 	@field:SerializedName("name")
 	val name: String,
 
+	@field:SerializedName("id")
+	val id: String,
+
 	@field:SerializedName("city_id")
 	val cityId: String,
 

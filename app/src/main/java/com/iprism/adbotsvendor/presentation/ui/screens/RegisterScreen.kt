@@ -64,9 +64,11 @@ fun RegisterScreen(
     val context = LocalContext.current
     val registerState by viewModel.registerResponse.collectAsStateWithLifecycle()
     val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
+    val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
 
     var cityList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
     var categoryList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
+    var areaList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchDropDowns()
@@ -77,6 +79,27 @@ fun RegisterScreen(
             val data = (dropDownsState as UiState.Success).data.response
             cityList = data.cities.map { SpinnerItem(it.cityName, it.id.toIntOrNull() ?: 0) }
             categoryList = data.categories.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
+        }
+    }
+
+    LaunchedEffect(areasState) {
+        if (areasState is UiState.Success) {
+            val data = (areasState as UiState.Success).data.response
+            areaList = data.areas.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
+        }
+    }
+
+    LaunchedEffect(areasState) {
+        if (areasState is UiState.Success) {
+            val data = (areasState as UiState.Success).data.response
+            areaList = data.areas.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
+        }
+    }
+
+    LaunchedEffect(areasState) {
+        if (areasState is UiState.Success) {
+            val data = (areasState as UiState.Success).data.response
+            areaList = data.areas.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
         }
     }
 
@@ -161,6 +184,9 @@ fun RegisterScreen(
                 selectedItem = selectedCity,
                 onItemSelected = {
                     selectedCity = it
+                    selectedArea = null
+                    areaList = emptyList()
+                    viewModel.fetchAreas(it.id.toString())
                 }
             )
             Spacer(Modifier.height(12.dp))
@@ -168,7 +194,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(12.dp))
             CustomSpinner(
                 label = stringResource(R.string.choose),
-                items = cityList, // Fallback or update when areas are fetched
+                items = areaList,
                 selectedItem = selectedArea,
                 onItemSelected = {
                     selectedArea = it
