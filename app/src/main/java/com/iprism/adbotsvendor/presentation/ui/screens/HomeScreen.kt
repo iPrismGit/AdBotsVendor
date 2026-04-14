@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.Banners
@@ -29,9 +30,10 @@ import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.Red
 import com.iprism.adbotsvendor.presentation.ui.theme.White
+import com.iprism.adbotsvendor.presentation.viewmodels.HomeViewModel
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier

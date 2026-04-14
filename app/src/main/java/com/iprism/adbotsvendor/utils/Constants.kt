@@ -8,4 +8,5 @@ object Constants {
     const val REGISTER_ENDPOINT = "vendor_registration"
     const val CONTENT_PAGES_ENDPOINT = "content_pages"
     const val DROP_DOWNS_ENDPOINT = "view_category_city_area"
+    const val HOME_PAGE_ENDPOINT = "vendor_homepage_details"
 }

@@ -6,6 +6,8 @@ import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesApiResponse
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesRequest
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
+import com.iprism.adbotsvendor.data.models.home.HomePageApiResponse
+import com.iprism.adbotsvendor.data.models.home.HomePageRequest
 import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
 import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.utils.Constants
@@ -25,4 +27,7 @@ interface HealthDrinksService {
 
     @POST(Constants.DROP_DOWNS_ENDPOINT)
     suspend fun fetchDropDowns(@Body request : DropDownsRequest) : DropDownsApiResponse
+
+    @POST(Constants.HOME_PAGE_ENDPOINT)
+    suspend fun fetchHomePage(@Body request : HomePageRequest) : HomePageApiResponse
 }
