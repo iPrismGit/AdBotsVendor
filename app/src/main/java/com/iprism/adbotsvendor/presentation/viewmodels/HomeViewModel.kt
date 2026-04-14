@@ -24,6 +24,10 @@ class HomeViewModel @Inject constructor(private val repository: CommonRepository
     private val _response = MutableStateFlow<UiState<HomePageApiResponse>>(UiState.Idle)
     val response: StateFlow<UiState<HomePageApiResponse>> = _response
 
+    init {
+        fetchHomePage()
+    }
+
     fun fetchHomePage() {
         viewModelScope.launch {
             _response.value = UiState.Loading
