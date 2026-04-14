@@ -101,28 +101,23 @@ class RegisterViewModel @Inject constructor(
                     _eventFlow.emit(UiEvent.ShowToast("Please Enter Your Name"))
                     return@launch
                 }
-
                 businessName.isEmpty() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Enter Business Name"))
                     return@launch
                 }
-
                 area.isEmpty() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Select Area"))
                     return@launch
                 }
-
                 city.isEmpty() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Select City"))
                     return@launch
                 }
-
                 vendorCategory.isEmpty() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Select Business Category"))
                     return@launch
                 }
             }
-
             try {
                 val user = dataStoreManager.userDetails.first()
                 val request = RegisterRequest(
@@ -137,13 +132,19 @@ class RegisterViewModel @Inject constructor(
                 Log.d("requestLoading", request.toString())
                 val response = repository.register(request)
                 if (response.status) {
-                    _registerResponse.value = UiState.Success(response)
                     _eventFlow.emit(UiEvent.NavigateToHome)
+                    val user = response.response.vendorDetails[0]
+                    dataStoreManager.saveUser(
+                        userId = user.id,
+                        userName = user.name,
+                        token = user.authToken
+                    )
+                    dataStoreManager.loginUser()
                 } else {
-                    _registerResponse.value = UiState.Error(response.message)
+                    _eventFlow.emit(UiEvent.ShowToast(response.message))
                 }
             } catch (e: Exception) {
-                _registerResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                _eventFlow.emit(UiEvent.ShowToast(e.localizedMessage ?: "Unknown error"))
             }
         }
     }

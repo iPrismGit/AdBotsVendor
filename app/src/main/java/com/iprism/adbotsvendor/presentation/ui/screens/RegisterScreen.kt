@@ -89,20 +89,6 @@ fun RegisterScreen(
         }
     }
 
-    LaunchedEffect(areasState) {
-        if (areasState is UiState.Success) {
-            val data = (areasState as UiState.Success).data.response
-            areaList = data.areas.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
-        }
-    }
-
-    LaunchedEffect(areasState) {
-        if (areasState is UiState.Success) {
-            val data = (areasState as UiState.Success).data.response
-            areaList = data.areas.map { SpinnerItem(it.name, it.id.toIntOrNull() ?: 0) }
-        }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
