@@ -41,6 +41,7 @@ import com.iprism.adbotsvendor.utils.UiState
 @Composable
 fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
 
+    val scrollState = rememberScrollState()
     val state by  homeViewModel.response.collectAsStateWithLifecycle()
     var banners by remember { mutableStateOf<List<BannersItem>>(emptyList()) }
 
@@ -59,7 +60,6 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
             else -> {}
         }
     }
-    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
