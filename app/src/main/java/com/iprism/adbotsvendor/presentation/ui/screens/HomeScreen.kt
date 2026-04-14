@@ -12,9 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
-import com.iprism.adbotsvendor.data.models.home.BannersItem
 import com.iprism.adbotsvendor.presentation.ui.components.Banners
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
@@ -42,24 +38,12 @@ import com.iprism.adbotsvendor.utils.UiState
 fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
 
     val scrollState = rememberScrollState()
-    val state by  homeViewModel.response.collectAsStateWithLifecycle()
-    var banners by remember { mutableStateOf<List<BannersItem>>(emptyList()) }
+    val state by homeViewModel.response.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         homeViewModel.fetchHomePage()
     }
-    LaunchedEffect(state) {
-        when(state) {
-            is UiState.Success -> {
-                banners = (state as UiState.Success).data.response.banners
-            }
-            is UiState.Error -> {
-            }
-            is UiState.Loading -> {
-            }
-            else -> {}
-        }
-    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -237,10 +221,11 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            Banners(banners)
+            if (state is UiState.Success) {
+                Banners((state as UiState.Success).data.response.banners)
+            }
             Spacer(modifier = Modifier.height(16.dp))
         }
-
         Spacer(modifier = Modifier.height(30.dp))
     }
 }
