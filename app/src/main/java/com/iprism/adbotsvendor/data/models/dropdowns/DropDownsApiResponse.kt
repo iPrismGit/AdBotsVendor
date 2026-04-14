@@ -38,13 +38,40 @@ data class CategoriesItem(
 	val status: String
 )
 
+data class AreasItem(
+
+	@field:SerializedName("updated_on")
+	val updatedOn: String,
+
+	@field:SerializedName("amount")
+	val amount: String,
+
+	@field:SerializedName("created_on")
+	val createdOn: String,
+
+	@field:SerializedName("delete_status")
+	val deleteStatus: String,
+
+	@field:SerializedName("name")
+	val name: String,
+
+	@field:SerializedName("city_id")
+	val cityId: String,
+
+	@field:SerializedName("status")
+	val status: String
+)
+
 data class Response(
 
 	@field:SerializedName("cities")
 	val cities: List<CitiesItem>,
 
 	@field:SerializedName("categories")
-	val categories: List<CategoriesItem>
+	val categories: List<CategoriesItem>,
+
+	@field:SerializedName("areas")
+	val areas: List<AreasItem>
 )
 
 data class CitiesItem(
