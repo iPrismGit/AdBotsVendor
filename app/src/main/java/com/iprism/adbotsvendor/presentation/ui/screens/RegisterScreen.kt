@@ -1,7 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
-import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
 import com.iprism.adbotsvendor.presentation.ui.components.Gender
@@ -66,15 +63,17 @@ fun RegisterScreen(
     val context = LocalContext.current
     val registerState by viewModel.registerResponse.collectAsStateWithLifecycle()
 
-    LaunchedEffect(registerState) {
-        when (registerState) {
-            is UiState.Success -> {
-                onNavigateToHome()
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                is RegisterViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+
+                RegisterViewModel.UiEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
             }
-            is UiState.Error -> {
-                Toast.makeText(context, (registerState as UiState.Error).message, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
         }
     }
 
@@ -101,7 +100,10 @@ fun RegisterScreen(
                 .padding(12.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(stringResource(R.string.add_business_details), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                stringResource(R.string.add_business_details),
+                style = MaterialTheme.typography.headlineMedium
+            )
             Spacer(Modifier.height(16.dp))
             TitleText(stringResource(R.string.your_name))
             Spacer(Modifier.height(12.dp))
@@ -171,21 +173,13 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                if (yourName.isBlank() || businessName.isBlank() || mobileNumber.isBlank() ||
-                    selectedCity == null || selectedArea == null || selectedBusinessCat == null
-                ) {
-                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
-                } else {
-                    val request = RegisterRequest(
-                        area = selectedArea?.name ?: "",
-                        userId = "32", // Assuming userId is handled elsewhere or empty for new user
-                        bussinessName = businessName,
-                        city = selectedCity?.name ?: "",
-                        name = yourName,
-                        vendorCategory = selectedBusinessCat?.name ?: ""
-                    )
-                    viewModel.register(request)
-                }
+                viewModel.registerUser(
+                    area =  selectedArea?.name ?: "",
+                    city = selectedCity?.name ?: "",
+                    businessName = businessName,
+                    name = yourName,
+                    vendorCategory = selectedBusinessCat?.name ?: ""
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
