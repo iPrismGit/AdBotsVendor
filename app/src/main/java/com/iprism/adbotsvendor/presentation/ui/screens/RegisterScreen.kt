@@ -49,6 +49,7 @@ import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
 fun RegisterScreen(
+    mobile : String,
     onBack: () -> Unit,
     onNavigateToHome: () -> Unit,
     viewModel: RegisterViewModel = hiltViewModel()
@@ -155,7 +156,7 @@ fun RegisterScreen(
             TitleText(stringResource(R.string.mobile_number))
             Spacer(Modifier.height(12.dp))
             CustomTextField(
-                mobileNumber,
+                mobile,
                 stringResource(R.string.enter),
                 KeyboardType.Phone
             ) { mobileNumber = it }
@@ -238,5 +239,4 @@ fun RegisterScreen(
 @Preview(showBackground = true)
 @Composable
 fun RegisterPreview() {
-    RegisterScreen(onBack = {}, onNavigateToHome = {})
 }

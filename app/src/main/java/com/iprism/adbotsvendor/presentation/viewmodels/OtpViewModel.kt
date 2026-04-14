@@ -29,7 +29,7 @@ class OtpViewModel @Inject constructor(
     val eventFlow = _eventFlow.receiveAsFlow()
 
     sealed class UiEvent {
-        object NavigateToRegister : UiEvent()
+        class NavigateToRegister(mobile : String) : UiEvent()
         object NavigateToHome : UiEvent()
     }
 
@@ -52,7 +52,7 @@ class OtpViewModel @Inject constructor(
                         dataStoreManager.loginUser()
                         _eventFlow.send(UiEvent.NavigateToHome)
                     } else {
-                        _eventFlow.send(UiEvent.NavigateToRegister)
+                        _eventFlow.send(UiEvent.NavigateToRegister(request.mobile))
                     }
                 } else {
                     _loginResponse.value = UiState.Error(response.message)

@@ -3,7 +3,9 @@ package com.iprism.adbotsvendor.navigation
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
     object Login : Screen("login")
-    object Register : Screen("register")
+    object Register : Screen("register/{mobile}") {
+        fun createRoute(mobile : String) = "register/$mobile"
+    }
     object Otp : Screen("otp")
     object Home : Screen("home")
     object Analytics : Screen("analytics")

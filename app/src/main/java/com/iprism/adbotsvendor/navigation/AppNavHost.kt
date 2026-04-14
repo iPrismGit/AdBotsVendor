@@ -71,7 +71,7 @@ fun AppNavHost(
                         navController.popBackStack()
                     },
                     onNavigateToRegister = {
-                        navController.navigate(Screen.Register.route)
+                        navController.navigate(Screen.Register.createRoute(mobile))
                     },
                     onNavigateToHome = {
                         navController.navigate(Screen.Home.route) {
@@ -119,10 +119,16 @@ fun AppNavHost(
             composable(Screen.Preview.route) {
                 PreviewScreen(navController)
             }
-            composable(Screen.Register.route) {
+            composable(Screen.Register.route) { backStackEntry ->
+                val mobile = backStackEntry.arguments?.getString("mobile") ?: ""
                 RegisterScreen(
+                    mobile,
                     { navController.popBackStack() },
-                    { navController.navigate(Screen.Home.route) })
+                    {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    })
             }
         }
     }
