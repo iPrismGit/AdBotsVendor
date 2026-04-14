@@ -138,7 +138,7 @@ class RegisterViewModel @Inject constructor(
                 val response = repository.register(request)
                 if (response.status) {
                     _registerResponse.value = UiState.Success(response)
-                    _eventFlow.emit(UiEvent.ShowToast("Submitted"))
+                    _eventFlow.emit(UiEvent.NavigateToHome)
                 } else {
                     _registerResponse.value = UiState.Error(response.message)
                 }
