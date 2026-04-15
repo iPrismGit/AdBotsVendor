@@ -29,15 +29,15 @@ class WalletViewModel @Inject constructor(private val repository: WalletReposito
     val event = _event
 
     init {
-        wallet()
+        wallet("", "", "wallet")
     }
 
-    fun wallet() {
+    fun wallet(transactionId : String, amount : String, viewType : String) {
         viewModelScope.launch {
             _response.value = UiState.Loading
             try {
                 val user = dataStoreManager.userDetails.first()
-                val request = WalletRequest("", "", user.userId?.toIntOrNull() ?: 0,"wallet", user.token ?: "")
+                val request = WalletRequest(transactionId, amount, user.userId?.toIntOrNull() ?: 0, viewType, user.token ?: "")
                 Log.d("requestLoading", request.toString())
                 val response = repository.wallet(request)
                 if (response.status) {
