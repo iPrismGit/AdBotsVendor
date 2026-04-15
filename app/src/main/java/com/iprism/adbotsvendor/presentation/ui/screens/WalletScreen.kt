@@ -39,7 +39,11 @@ import com.iprism.adbotsvendor.presentation.viewmodels.WalletViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewModel: WalletViewModel = hiltViewModel()) {
+fun WalletScreen(
+    onBack: () -> Unit,
+    onNavigateWalletHistory: () -> Unit,
+    viewModel: WalletViewModel = hiltViewModel()
+) {
 
     var amount by remember { mutableStateOf("") }
     val selectedAmount = remember { mutableIntStateOf(100) }
@@ -87,7 +91,12 @@ fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewM
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Column(modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
             Text(
                 text = "Wallet",
                 style = MaterialTheme.typography.headlineSmall,
@@ -125,7 +134,10 @@ fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewM
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center, color = BLACK),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textAlign = TextAlign.Center,
+                    color = BLACK
+                ),
                 placeholder = {
                     Text(
                         "Add money to Wallet",
@@ -194,9 +206,6 @@ fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewM
             }
             Spacer(modifier = Modifier.height(12.dp))
         }
-        if (state is UiState.Loading) {
-            LoadingScreen()
-        }
         Button(
             onClick = { viewModel.wallet("12345", amount.toInt(), "recharge_wallet") },
             modifier = Modifier
@@ -212,5 +221,8 @@ fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewM
                 modifier = Modifier.padding(8.dp)
             )
         }
+    }
+    if (state is UiState.Loading) {
+        LoadingScreen()
     }
 }
