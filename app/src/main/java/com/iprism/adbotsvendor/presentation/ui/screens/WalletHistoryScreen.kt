@@ -33,6 +33,7 @@ fun WalletHistoryScreen(
 ) {
     val historyItems by viewModel.historyItems.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -68,6 +69,22 @@ fun WalletHistoryScreen(
                         viewModel.fetchWalletHistory()
                     }
                     TransactionItem(transaction)
+                }
+
+                if (isPaginationLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
                 }
             }
         }

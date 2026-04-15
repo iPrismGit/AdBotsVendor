@@ -27,6 +27,9 @@ class WalletHistoryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val uiState: StateFlow<UiState<Unit>> = _uiState
 
+    private val _isPaginationLoading = MutableStateFlow(false)
+    val isPaginationLoading: StateFlow<Boolean> = _isPaginationLoading
+
     private var currentPage = 1
     private var isLastPage = false
     private var isFetching = false
@@ -40,7 +43,11 @@ class WalletHistoryViewModel @Inject constructor(
 
         viewModelScope.launch {
             isFetching = true
-            if (currentPage == 1) _uiState.value = UiState.Loading
+            if (currentPage == 1) {
+                _uiState.value = UiState.Loading
+            } else {
+                _isPaginationLoading.value = true
+            }
             
             try {
                 val user = dataStoreManager.userDetails.first()
@@ -78,6 +85,7 @@ class WalletHistoryViewModel @Inject constructor(
                 }
             } finally {
                 isFetching = false
+                _isPaginationLoading.value = false
             }
         }
     }
