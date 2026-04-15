@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,15 +23,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.data.models.analytics.PromotionsItem
+import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
+import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkRed
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
+import com.iprism.adbotsvendor.presentation.viewmodels.AnalyticsViewModel
+import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun AnalyticsScreen(navController: NavHostController) {
+fun AnalyticsScreen(navController: NavHostController, viewModel : AnalyticsViewModel = hiltViewModel()) {
+
+    val analytics by viewModel.analytics.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,18 +155,52 @@ fun AnalyticsScreen(navController: NavHostController) {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                itemsIndexed(analytics) { index, promotion ->
+                    if (index >= analytics.size - 1) {
+                        viewModel.fetchAnalytics()
+                    }
+                    PromotionCardInAnalytics({ navController.navigate("promotion_details") }, promotion)
+                }
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(8) {
-                    PromotionCardInAnalytics({ navController.navigate("promotion_details") })
+                if (isPaginationLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
                 }
             }
+
+            if (uiState is UiState.Error && analytics.isEmpty()) {
+                Text(
+                    text = (uiState as UiState.Error).message,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    color = BLACK
+                )
+            }
         }
+    }
+
+    if (uiState is UiState.Loading && analytics.isEmpty()) {
+        LoadingScreen()
     }
 }
 
 @Composable
-fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
+fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit, promotionsItem: PromotionsItem) {
     val cardGradient = Brush.horizontalGradient(
         colors = listOf(Color(0xFF015DC5), Color(0xFF559CEE))
     )
@@ -167,14 +215,14 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Add 01",
+                    text = promotionsItem.name,
                     color = White,
                     fontFamily = MontserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = " (iPrism Add)",
+                    text = " (₹${promotionsItem.bussinessName})",
                     color = White,
                     fontFamily = MontserratFamily,
                     fontSize = 14.sp,
@@ -185,7 +233,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Start Date : 21-03-2026",
+                text = "Start Date : ${promotionsItem.startDate}",
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
@@ -195,7 +243,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "End Date : 21-04-2026",
+                text = "End Date : ${promotionsItem.endDate}",
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
