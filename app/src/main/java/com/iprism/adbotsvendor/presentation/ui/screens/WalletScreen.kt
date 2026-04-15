@@ -46,7 +46,7 @@ fun WalletScreen(
 ) {
 
     var amount by remember { mutableStateOf("") }
-    val selectedAmount = remember { mutableIntStateOf(100) }
+    val selectedAmount = remember { mutableIntStateOf(0) }
     val state by viewModel.response.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -133,7 +133,11 @@ fun WalletScreen(
 
             OutlinedTextField(
                 value = amount,
-                onValueChange = { amount = it },
+                onValueChange = {
+                    if (it.all { char -> char.isDigit() }) {
+                        amount = it
+                    }
+                },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     textAlign = TextAlign.Center,
                     color = BLACK
@@ -191,7 +195,10 @@ fun WalletScreen(
                                 color = if (isSelected) LightBlue else BorderGrey,
                                 shape = RoundedCornerShape(25.dp)
                             )
-                            .clickable { selectedAmount.intValue = opt },
+                            .clickable {
+                                selectedAmount.intValue = opt
+                                amount = opt.toString()
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -207,12 +214,13 @@ fun WalletScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
         Button(
-            onClick = { viewModel.wallet("12345", amount.toInt(), "recharge_wallet") },
+            onClick = { viewModel.wallet("12345", amount.toIntOrNull() ?: 0, "recharge_wallet") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 12.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            enabled = amount.toIntOrNull() != null && amount.isNotEmpty()
         ) {
             Text(
                 text = "Continue",
