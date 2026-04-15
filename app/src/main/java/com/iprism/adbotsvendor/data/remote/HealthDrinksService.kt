@@ -2,6 +2,8 @@ package com.iprism.adbotsvendor.data.remote
 
 import com.iprism.adbotsvendor.data.models.LoginApiResponse
 import com.iprism.adbotsvendor.data.models.LoginRequest
+import com.iprism.adbotsvendor.data.models.analytics.AnalyticsApiResponse
+import com.iprism.adbotsvendor.data.models.analytics.AnalyticsRequest
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesApiResponse
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesRequest
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
@@ -40,4 +42,7 @@ interface HealthDrinksService {
 
     @POST(Constants.WALLET_HISTORY_ENDPOINT)
     suspend fun fetchWalletHistory(@Body request : WalletHistoryRequest) : WalletHistoryApiResponse
+
+    @POST(Constants.ANALYTICS_ENDPOINT)
+    suspend fun fetchAnalytics(@Body request : AnalyticsRequest) : AnalyticsApiResponse
 }
