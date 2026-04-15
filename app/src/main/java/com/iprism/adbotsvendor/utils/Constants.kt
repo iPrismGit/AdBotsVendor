@@ -10,4 +10,5 @@ object Constants {
     const val DROP_DOWNS_ENDPOINT = "view_category_city_area"
     const val HOME_PAGE_ENDPOINT = "vendor_homepage_details"
     const val WALLET_ENDPOINT = "vendor_wallet_details"
+    const val WALLET_HISTORY_ENDPOINT = "vendor_wallet_history"
 }

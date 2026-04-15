@@ -12,6 +12,8 @@ import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
 import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.data.models.wallet.WalletApiResponse
 import com.iprism.adbotsvendor.data.models.wallet.WalletRequest
+import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryApiResponse
+import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryRequest
 import com.iprism.adbotsvendor.utils.Constants
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -35,4 +37,7 @@ interface HealthDrinksService {
 
     @POST(Constants.WALLET_ENDPOINT)
     suspend fun wallet(@Body request : WalletRequest) : WalletApiResponse
+
+    @POST(Constants.WALLET_HISTORY_ENDPOINT)
+    suspend fun fetchWalletHistory(@Body request : WalletHistoryRequest) : WalletHistoryApiResponse
 }
