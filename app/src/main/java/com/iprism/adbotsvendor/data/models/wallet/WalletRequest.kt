@@ -8,7 +8,7 @@ data class WalletRequest(
 	val transactionId: String,
 
 	@field:SerializedName("amount")
-	val amount: String,
+	val amount: Int,
 
 	@field:SerializedName("user_id")
 	val userId: Int,

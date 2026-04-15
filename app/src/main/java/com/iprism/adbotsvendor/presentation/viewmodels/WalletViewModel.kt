@@ -29,11 +29,18 @@ class WalletViewModel @Inject constructor(private val repository: WalletReposito
     val event = _event
 
     init {
-        wallet("", "", "wallet")
+        wallet("", 0, "wallet")
     }
 
-    fun wallet(transactionId : String, amount : String, viewType : String) {
+    fun wallet(transactionId : String, amount : Int, viewType : String) {
         viewModelScope.launch {
+            if (viewType.equals("recharge_wallet", true)) {
+                val error = validateAmount(amount)
+                if (error != null) {
+                    _event.emit(error)
+                    return@launch
+                }
+            }
             _response.value = UiState.Loading
             try {
                 val user = dataStoreManager.userDetails.first()
@@ -51,5 +58,12 @@ class WalletViewModel @Inject constructor(private val repository: WalletReposito
                 _event.emit(e.localizedMessage ?: "Unknown error")
             }
         }
+    }
+
+    private fun validateAmount(amount: Int): String? {
+        if (amount <= 0) return "Amount must be greater than 0"
+        if (amount < 10) return "Minimum recharge is ₹10"
+        if (amount > 10000) return "Maximum limit is ₹10000"
+        return null
     }
 }

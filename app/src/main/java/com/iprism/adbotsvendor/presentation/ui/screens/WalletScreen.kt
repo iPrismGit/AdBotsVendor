@@ -197,7 +197,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
             LoadingScreen()
         }
         Button(
-            onClick = { /* Continue logic */ },
+            onClick = { viewModel.wallet("12345", amount.toInt(), "recharge_wallet") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 12.dp),
