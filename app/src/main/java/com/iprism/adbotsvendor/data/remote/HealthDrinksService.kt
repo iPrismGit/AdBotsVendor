@@ -10,6 +10,8 @@ import com.iprism.adbotsvendor.data.models.home.HomePageApiResponse
 import com.iprism.adbotsvendor.data.models.home.HomePageRequest
 import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
 import com.iprism.adbotsvendor.data.models.register.RegisterRequest
+import com.iprism.adbotsvendor.data.models.wallet.WalletApiResponse
+import com.iprism.adbotsvendor.data.models.wallet.WalletRequest
 import com.iprism.adbotsvendor.utils.Constants
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -30,4 +32,7 @@ interface HealthDrinksService {
 
     @POST(Constants.HOME_PAGE_ENDPOINT)
     suspend fun fetchHomePage(@Body request : HomePageRequest) : HomePageApiResponse
+
+    @POST(Constants.WALLET_ENDPOINT)
+    suspend fun wallet(@Body request : WalletRequest) : WalletApiResponse
 }
