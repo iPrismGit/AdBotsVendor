@@ -64,7 +64,6 @@ fun WalletHistoryScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 itemsIndexed(historyItems) { index, transaction ->
-                    // Trigger pagination when reaching the end of the list
                     if (index >= historyItems.size - 1) {
                         viewModel.fetchWalletHistory()
                     }
@@ -81,7 +80,7 @@ fun WalletHistoryScreen(
             Text(
                 text = (uiState as UiState.Error).message,
                 modifier = Modifier.align(Alignment.Center),
-                color = Color.Red
+                color = BLACK
             )
         }
     }
