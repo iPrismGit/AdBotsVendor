@@ -96,7 +96,7 @@ fun AppNavHost(
                 NotificationsScreen(navController)
             }
             composable(Screen.Wallet.route) {
-                WalletScreen(navController)
+                WalletScreen({navController.popBackStack()},{navController.navigate(Screen.WalletHistory.route)})
             }
             composable(Screen.WalletHistory.route) {
                 WalletHistoryScreen(navController)

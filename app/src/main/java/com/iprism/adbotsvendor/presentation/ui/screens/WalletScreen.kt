@@ -30,6 +30,7 @@ import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
+import com.iprism.adbotsvendor.presentation.ui.theme.Green
 import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
@@ -38,7 +39,7 @@ import com.iprism.adbotsvendor.presentation.viewmodels.WalletViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = hiltViewModel()) {
+fun WalletScreen(onBack : () -> Unit, onNavigateWalletHistory: () -> Unit, viewModel: WalletViewModel = hiltViewModel()) {
 
     var amount by remember { mutableStateOf("") }
     val selectedAmount = remember { mutableIntStateOf(100) }
@@ -63,7 +64,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = { onBack() },
                 modifier = Modifier.padding(start = 6.dp)
             ) {
                 Icon(
@@ -73,7 +74,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
                 )
             }
             IconButton(
-                onClick = { navController.navigate("wallet_history") },
+                onClick = { onNavigateWalletHistory() },
                 modifier = Modifier.padding(end = 6.dp)
             ) {
                 Icon(
@@ -108,7 +109,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = MontserratFamily,
-                    color = BLACK
+                    color = Green
                 )
                 Text(
                     text = "Available Wallet Amount",
@@ -124,7 +125,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                textStyle = MaterialTheme.typography.bodySmall,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center, color = BLACK),
                 placeholder = {
                     Text(
                         "Add money to Wallet",
@@ -143,7 +144,7 @@ fun WalletScreen(navController: NavHostController, viewModel: WalletViewModel = 
                     unfocusedBorderColor = BorderGrey,
                     focusedBorderColor = LightBlue
                 ),
-                singleLine = true
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
