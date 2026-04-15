@@ -3,11 +3,8 @@ package com.iprism.adbotsvendor.presentation.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesApiResponse
-import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesRequest
-import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryApiResponse
+import com.iprism.adbotsvendor.data.models.wallethistory.HistoryItem
 import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryRequest
-import com.iprism.adbotsvendor.data.repositories.SettingsRepository
 import com.iprism.adbotsvendor.data.repositories.WalletRepository
 import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
@@ -19,26 +16,68 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WalletHistoryViewModel @Inject constructor(private val repository: WalletRepository, private val dataStoreManager: DataStoreManager) : ViewModel() {
+class WalletHistoryViewModel @Inject constructor(
+    private val repository: WalletRepository,
+    private val dataStoreManager: DataStoreManager
+) : ViewModel() {
 
-    private val _response = MutableStateFlow<UiState<WalletHistoryApiResponse>>(UiState.Idle)
-    val response: StateFlow<UiState<WalletHistoryApiResponse>> = _response
+    private val _historyItems = MutableStateFlow<List<HistoryItem>>(emptyList())
+    val historyItems: StateFlow<List<HistoryItem>> = _historyItems
+
+    private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
+    val uiState: StateFlow<UiState<Unit>> = _uiState
+
+    private var currentPage = 1
+    private var isLastPage = false
+    private var isFetching = false
+
+    init {
+        fetchWalletHistory()
+    }
 
     fun fetchWalletHistory() {
+        if (isFetching || isLastPage) return
+
         viewModelScope.launch {
-            _response.value = UiState.Loading
+            isFetching = true
+            if (currentPage == 1) _uiState.value = UiState.Loading
+            
             try {
                 val user = dataStoreManager.userDetails.first()
-                val request = WalletHistoryRequest(user.userId?.toIntOrNull() ?: 0, 1, user.token ?: "")
+                val request = WalletHistoryRequest(
+                    userId = user.userId?.toIntOrNull() ?: 0,
+                    page = currentPage,
+                    authToken = user.token ?: ""
+                )
                 Log.d("requestLoading", request.toString())
+                
                 val response = repository.fetchWalletHistory(request)
                 if (response.status) {
-                    _response.value = UiState.Success(response)
+                    val newItems = response.response.history
+                    if (newItems.isNotEmpty()) {
+                        _historyItems.value += newItems
+                        val totalPages = response.response.pagination.totalPages.size
+                        if (currentPage >= totalPages) {
+                            isLastPage = true
+                        } else {
+                            currentPage++
+                        }
+                    } else {
+                        isLastPage = true
+                    }
+                    _uiState.value = UiState.Success(Unit)
                 } else {
-                    _response.value = UiState.Error(response.message)
+                    if (currentPage == 1) {
+                        _uiState.value = UiState.Error(response.message)
+                    }
                 }
             } catch (e: Exception) {
-                _response.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                Log.e("WalletHistoryVM", "Error fetching history", e)
+                if (currentPage == 1) {
+                    _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                }
+            } finally {
+                isFetching = false
             }
         }
     }
