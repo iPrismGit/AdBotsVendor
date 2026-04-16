@@ -222,7 +222,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit, promotionsItem: Promo
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = " (₹${promotionsItem.bussinessName})",
+                    text = " (${promotionsItem.bussinessName})",
                     color = White,
                     fontFamily = MontserratFamily,
                     fontSize = 14.sp,
