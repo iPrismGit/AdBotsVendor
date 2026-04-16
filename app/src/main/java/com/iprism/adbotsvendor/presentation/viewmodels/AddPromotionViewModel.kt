@@ -13,9 +13,26 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class PromotionFormState(
+    val name: String = "",
+    val businessName: String = "",
+    val mobile: String = "",
+    val cityId: String = "",
+    val cityName: String = "",
+    val areaId: String = "",
+    val areaName: String = "",
+    val categoryId: String = "",
+    val categoryName: String = "",
+    val startDate: String = "",
+    val endDate: String = "",
+    val screenCount: Int = 1
+)
 
 @HiltViewModel
 class AddPromotionViewModel @Inject constructor(
@@ -24,10 +41,13 @@ class AddPromotionViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _dropDownsResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
-    val dropDownsResponse: StateFlow<UiState<DropDownsApiResponse>> = _dropDownsResponse
+    val dropDownsResponse: StateFlow<UiState<DropDownsApiResponse>> = _dropDownsResponse.asStateFlow()
 
     private val _areasResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
-    val areasResponse: StateFlow<UiState<DropDownsApiResponse>> = _areasResponse
+    val areasResponse: StateFlow<UiState<DropDownsApiResponse>> = _areasResponse.asStateFlow()
+
+    private val _formState = MutableStateFlow(PromotionFormState())
+    val formState: StateFlow<PromotionFormState> = _formState.asStateFlow()
 
     private val _validationEvent = MutableSharedFlow<Boolean>()
     val validationEvent = _validationEvent.asSharedFlow()
@@ -35,32 +55,27 @@ class AddPromotionViewModel @Inject constructor(
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
 
-    // Form data
-    var name: String = ""
-    var businessName: String = ""
-    var mobile: String = ""
-    var city: String = ""
-    var area: String = ""
-    var category: String = ""
-    var startDate: String = ""
-    var endDate: String = ""
-    var screenCount1: Int = 1
+    fun updateName(name: String) = _formState.update { it.copy(name = name) }
+    fun updateBusinessName(businessName: String) = _formState.update { it.copy(businessName = businessName) }
+    fun updateMobile(mobile: String) = _formState.update { it.copy(mobile = mobile) }
+    
+    fun updateCity(id: String, name: String) {
+        _formState.update { it.copy(cityId = id, cityName = name, areaId = "", areaName = "") }
+        fetchAreas(id)
+    }
+    
+    fun updateArea(id: String, name: String) = _formState.update { it.copy(areaId = id, areaName = name) }
+    fun updateCategory(id: String, name: String) = _formState.update { it.copy(categoryId = id, categoryName = name) }
 
-    fun validateBusinessDetails(
-        name: String,
-        businessName: String,
-        mobile: String,
-        city: String?,
-        area: String?,
-        category: String?
-    ) {
+    fun validateBusinessDetails() {
+        val state = _formState.value
         val error = when {
-            name.isBlank() -> "Please enter your name"
-            businessName.isBlank() -> "Please enter business name"
-            mobile.length != 10 -> "Please enter a valid 10-digit mobile number"
-            city == null -> "Please select a city"
-            area == null -> "Please select an area"
-            category == null -> "Please select a business category"
+            state.name.isBlank() -> "Please enter your name"
+            state.businessName.isBlank() -> "Please enter business name"
+            state.mobile.length != 10 -> "Please enter a valid 10-digit mobile number"
+            state.cityId.isBlank() -> "Please select a city"
+            state.areaId.isBlank() -> "Please select an area"
+            state.categoryId.isBlank() -> "Please select a business category"
             else -> null
         }
 
@@ -68,39 +83,37 @@ class AddPromotionViewModel @Inject constructor(
             if (error != null) {
                 _toastMessage.emit(error)
             } else {
-                this@AddPromotionViewModel.name = name
-                this@AddPromotionViewModel.businessName = businessName
-                this@AddPromotionViewModel.mobile = mobile
-                this@AddPromotionViewModel.city = city ?: ""
-                this@AddPromotionViewModel.area = area ?: ""
-                this@AddPromotionViewModel.category = category ?: ""
                 _validationEvent.emit(true)
             }
         }
     }
 
+    init {
+        fetchDropDowns()
+    }
+
     fun setDates(start: String, end: String) {
-        this.startDate = start
-        this.endDate = end
+        _formState.update { it.copy(startDate = start, endDate = end) }
     }
 
     fun setScreenCount(count: Int) {
-        this.screenCount1 = count
+        _formState.update { it.copy(screenCount = count) }
         logAllData()
     }
 
     private fun logAllData() {
+        val state = _formState.value
         Log.d("AddPromotion", """
             Form Data:
-            Your Name: $name
-            Business Name: $businessName
-            Mobile: $mobile
-            City: $city
-            Area: $area
-            Category: $category
-            Start Date: $startDate
-            End Date: $endDate
-            Screen Count: $screenCount1
+            Your Name: ${state.name}
+            Business Name: ${state.businessName}
+            Mobile: ${state.mobile}
+            City: ${state.cityName} (ID: ${state.cityId})
+            Area: ${state.areaName} (ID: ${state.areaId})
+            Category: ${state.categoryName} (ID: ${state.categoryId})
+            Start Date: ${state.startDate}
+            End Date: ${state.endDate}
+            Screen Count: ${state.screenCount}
         """.trimIndent())
     }
 
@@ -127,7 +140,7 @@ class AddPromotionViewModel @Inject constructor(
         }
     }
 
-    fun fetchAreas(cityId: String) {
+    private fun fetchAreas(cityId: String) {
         viewModelScope.launch {
             _areasResponse.value = UiState.Loading
             try {

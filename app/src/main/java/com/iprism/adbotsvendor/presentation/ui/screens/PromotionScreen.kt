@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,66 +78,43 @@ fun PromotionScreen(
     onContinueClick: () -> Unit,
     viewModel: AddPromotionViewModel = hiltViewModel()
 ) {
-
-    var yourName by rememberSaveable { mutableStateOf("") }
-    var businessName by rememberSaveable { mutableStateOf("") }
-    var mobileNumber by rememberSaveable { mutableStateOf("") }
-    var selectedCity by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
-    var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
-    var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
-
     val context = LocalContext.current
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
     val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
     val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
+    var bottomSheetStep by remember { mutableIntStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchDropDowns()
+    LaunchedEffect(viewModel) {
         viewModel.validationEvent.collectLatest { isValid ->
-            if (isValid) {
-                showBottomSheet = true
-            }
+            if (isValid) showBottomSheet = true
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.toastMessage.collectLatest { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
 
     val cities = remember(dropDownsState) {
-        if (dropDownsState is UiState.Success) {
-            (dropDownsState as UiState.Success).data.response.cities.map {
-                SpinnerItem(it.cityName, it.id.toIntOrNull() ?: 0)
-            }
-        } else emptyList()
+        (dropDownsState as? UiState.Success)?.data?.response?.cities?.map {
+            SpinnerItem(it.cityName, it.id.toIntOrNull() ?: 0)
+        } ?: emptyList()
     }
 
     val categories = remember(dropDownsState) {
-        if (dropDownsState is UiState.Success) {
-            (dropDownsState as UiState.Success).data.response.categories.map {
-                SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
-            }
-        } else emptyList()
+        (dropDownsState as? UiState.Success)?.data?.response?.categories?.map {
+            SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
+        } ?: emptyList()
     }
 
     val areas = remember(areasState) {
-        if (areasState is UiState.Success) {
-            (areasState as UiState.Success).data.response.areas.map {
-                SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
-            }
-        } else emptyList()
-    }
-
-    LaunchedEffect(selectedCity) {
-        selectedCity?.let {
-            viewModel.fetchAreas(it.id.toString())
-            selectedArea = null
-        }
+        (areasState as? UiState.Success)?.data?.response?.areas?.map {
+            SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
+        } ?: emptyList()
     }
 
     if (showBottomSheet) {
@@ -183,7 +158,7 @@ fun PromotionScreen(
                 .statusBarsPadding()
         ) {
             IconButton(
-                onClick = { onBack() },
+                onClick = onBack,
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(
@@ -202,83 +177,70 @@ fun PromotionScreen(
             ) {
                 Text("Business Details", style = MaterialTheme.typography.headlineMedium)
                 Spacer(Modifier.height(16.dp))
+
                 TitleText(stringResource(R.string.your_name))
                 Spacer(Modifier.height(12.dp))
-
                 CustomTextField(
-                    yourName,
+                    formState.name,
                     stringResource(R.string.enter),
-                    KeyboardType.Text
-                ) { yourName = it }
+                    KeyboardType.Text,
+                    onValueChange = viewModel::updateName
+                )
 
                 Spacer(Modifier.height(12.dp))
-
                 TitleText(stringResource(R.string.business_name))
                 Spacer(Modifier.height(12.dp))
-
                 CustomTextField(
-                    businessName,
+                    formState.businessName,
                     stringResource(R.string.enter),
-                    KeyboardType.Text
-                ) { businessName = it }
-                Spacer(Modifier.height(12.dp))
+                    KeyboardType.Text,
+                    onValueChange = viewModel::updateBusinessName
+                )
 
+                Spacer(Modifier.height(12.dp))
                 TitleText(stringResource(R.string.mobile_number))
                 Spacer(Modifier.height(12.dp))
                 CustomTextField(
-                    mobileNumber,
+                    formState.mobile,
                     stringResource(R.string.enter),
-                    KeyboardType.Phone
-                ) { mobileNumber = it }
+                    KeyboardType.Phone,
+                    onValueChange = viewModel::updateMobile
+                )
 
                 Spacer(Modifier.height(12.dp))
-
                 TitleText(stringResource(R.string.city))
                 Spacer(Modifier.height(12.dp))
                 CustomSpinner(
                     label = stringResource(R.string.choose),
                     items = cities,
-                    selectedItem = selectedCity,
-                    onItemSelected = {
-                        selectedCity = it
-                    }
+                    selectedItem = cities.find { it.id.toString() == formState.cityId },
+                    onItemSelected = { viewModel.updateCity(it.id.toString(), it.name) }
                 )
+
                 Spacer(Modifier.height(12.dp))
                 TitleText(stringResource(R.string.area))
                 Spacer(Modifier.height(12.dp))
                 CustomSpinner(
                     label = stringResource(R.string.choose),
                     items = areas,
-                    selectedItem = selectedArea,
-                    onItemSelected = {
-                        selectedArea = it
-                    }
+                    selectedItem = areas.find { it.id.toString() == formState.areaId },
+                    onItemSelected = { viewModel.updateArea(it.id.toString(), it.name) }
                 )
+
                 Spacer(Modifier.height(12.dp))
                 TitleText(stringResource(R.string.business_category))
                 Spacer(Modifier.height(12.dp))
                 CustomSpinner(
                     label = stringResource(R.string.choose),
                     items = categories,
-                    selectedItem = selectedBusinessCat,
-                    onItemSelected = {
-                        selectedBusinessCat = it
-                    }
+                    selectedItem = categories.find { it.id.toString() == formState.categoryId },
+                    onItemSelected = { viewModel.updateCategory(it.id.toString(), it.name) }
                 )
                 Spacer(Modifier.height(12.dp))
             }
 
             Button(
-                onClick = {
-                    viewModel.validateBusinessDetails(
-                        name = yourName,
-                        businessName = businessName,
-                        mobile = mobileNumber,
-                        city = selectedCity?.name,
-                        area = selectedArea?.name,
-                        category = selectedBusinessCat?.name
-                    )
-                },
+                onClick = viewModel::validateBusinessDetails,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 12.dp, bottom = 12.dp, end = 12.dp)
@@ -305,10 +267,8 @@ fun PromotionScreen(
 fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
     var startDate by remember { mutableStateOf<Long?>(null) }
     var endDate by remember { mutableStateOf<Long?>(null) }
-
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
-
     val dateFormatter = remember { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) }
 
     if (showStartDatePicker) {
@@ -324,9 +284,7 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
             }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+        ) { DatePicker(state = datePickerState) }
     }
 
     if (showEndDatePicker) {
@@ -342,34 +300,18 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
             dismissButton = {
                 TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
             }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+        ) { DatePicker(state = datePickerState) }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-    ) {
-        Text(
-            text = "Choose Dates",
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.Black
-        )
-
+    Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+        Text("Choose Dates", style = MaterialTheme.typography.headlineSmall, color = Color.Black)
         Spacer(modifier = Modifier.height(32.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Start Date",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = BLACK1
-                )
+                Text("Start Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
                 Spacer(modifier = Modifier.height(12.dp))
                 DateSelectorBox(
                     text = startDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
@@ -377,7 +319,7 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "End Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+                Text("End Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
                 Spacer(modifier = Modifier.height(12.dp))
                 DateSelectorBox(
                     text = endDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
@@ -385,21 +327,15 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(48.dp))
-
         Button(
             onClick = {
                 if (startDate != null && endDate != null) {
-                    onContinue(
-                        dateFormatter.format(Date(startDate!!)),
-                        dateFormatter.format(Date(endDate!!))
-                    )
+                    onContinue(dateFormatter.format(Date(startDate!!)), dateFormatter.format(Date(endDate!!)))
                 }
             },
             enabled = startDate != null && endDate != null,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = DarkBlue,
@@ -408,13 +344,8 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
                 disabledContentColor = Color.LightGray
             )
         ) {
-            Text(
-                text = "Continue",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(8.dp)
-            )
+            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
         }
-
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -422,89 +353,39 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
 @Composable
 fun HowManyScreensContent(onContinue: (Int) -> Unit) {
     var screenCount by remember { mutableIntStateOf(1) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-    ) {
-        Text(
-            text = "How Many Screens",
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.Black
-        )
-
+    Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+        Text("How Many Screens", style = MaterialTheme.typography.headlineSmall, color = Color.Black)
         Spacer(modifier = Modifier.height(32.dp))
-
-        Text(text = "Select", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+        Text("Select", style = MaterialTheme.typography.bodySmall, color = BLACK1)
         Spacer(modifier = Modifier.height(12.dp))
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = LightGrey1,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .background(
-                    color = White,
-                    shape = RoundedCornerShape(12.dp)
-                )
+                .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
+                .background(White, RoundedCornerShape(12.dp))
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = String.format("%02d", screenCount),
-                fontFamily = MontserratFamily,
-                fontWeight = FontWeight.Normal,
-                color = BLACK,
-                fontSize = 12.sp
-            )
-
+            Text(String.format("%02d", screenCount), fontFamily = MontserratFamily, color = BLACK, fontSize = 12.sp)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Text(
-                    text = "-",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { if (screenCount > 1) screenCount-- }
-                )
-                Text(
-                    text = screenCount.toString(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = MontserratFamily,
-                    color = BLACK
-                )
-                Text(
-                    text = "+",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { screenCount++ }
-                )
+                Text("-", fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { if (screenCount > 1) screenCount-- })
+                Text(screenCount.toString(), fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily, color = BLACK)
+                Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { screenCount++ })
             }
         }
-
         Spacer(modifier = Modifier.height(48.dp))
-
         Button(
             onClick = { onContinue(screenCount) },
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
         ) {
-            Text(
-                text = "Continue",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(8.dp)
-            )
+            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
         }
-
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -532,12 +413,7 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
                 color = if (text == "Choose") Color.LightGray else BLACK,
                 fontSize = 12.sp
             )
-            Icon(
-                painter = painterResource(R.drawable.calender_img),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = BLACK1
-            )
+            Icon(painter = painterResource(R.drawable.calender_img), contentDescription = null, modifier = Modifier.size(20.dp), tint = BLACK1)
         }
     }
 }
