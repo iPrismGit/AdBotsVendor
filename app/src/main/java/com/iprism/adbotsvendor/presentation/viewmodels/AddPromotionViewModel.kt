@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
-import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
-import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
 import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
@@ -14,8 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -39,6 +35,17 @@ class AddPromotionViewModel @Inject constructor(
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
 
+    // Form data
+    var name: String = ""
+    var businessName: String = ""
+    var mobile: String = ""
+    var city: String = ""
+    var area: String = ""
+    var category: String = ""
+    var startDate: String = ""
+    var endDate: String = ""
+    var screenCount1: Int = 1
+
     fun validateBusinessDetails(
         name: String,
         businessName: String,
@@ -61,9 +68,40 @@ class AddPromotionViewModel @Inject constructor(
             if (error != null) {
                 _toastMessage.emit(error)
             } else {
+                this@AddPromotionViewModel.name = name
+                this@AddPromotionViewModel.businessName = businessName
+                this@AddPromotionViewModel.mobile = mobile
+                this@AddPromotionViewModel.city = city ?: ""
+                this@AddPromotionViewModel.area = area ?: ""
+                this@AddPromotionViewModel.category = category ?: ""
                 _validationEvent.emit(true)
             }
         }
+    }
+
+    fun setDates(start: String, end: String) {
+        this.startDate = start
+        this.endDate = end
+    }
+
+    fun setScreenCount(count: Int) {
+        this.screenCount1 = count
+        logAllData()
+    }
+
+    private fun logAllData() {
+        Log.d("AddPromotion", """
+            Form Data:
+            Your Name: $name
+            Business Name: $businessName
+            Mobile: $mobile
+            City: $city
+            Area: $area
+            Category: $category
+            Start Date: $startDate
+            End Date: $endDate
+            Screen Count: $screenCount1
+        """.trimIndent())
     }
 
     fun fetchDropDowns() {

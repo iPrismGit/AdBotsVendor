@@ -161,11 +161,13 @@ fun PromotionScreen(
             containerColor = Color.White
         ) {
             if (bottomSheetStep == 0) {
-                ChooseDatesContent(onContinue = {
+                ChooseDatesContent(onContinue = { start, end ->
+                    viewModel.setDates(start, end)
                     bottomSheetStep = 1
                 })
             } else {
-                HowManyScreensContent(onContinue = {
+                HowManyScreensContent(onContinue = { count ->
+                    viewModel.setScreenCount(count)
                     showBottomSheet = false
                     bottomSheetStep = 0
                     onContinueClick()
@@ -300,7 +302,7 @@ fun PromotionScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChooseDatesContent(onContinue: () -> Unit) {
+fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
     var startDate by remember { mutableStateOf<Long?>(null) }
     var endDate by remember { mutableStateOf<Long?>(null) }
 
@@ -387,15 +389,23 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
         Spacer(modifier = Modifier.height(48.dp))
 
         Button(
-            onClick = onContinue,
+            onClick = {
+                if (startDate != null && endDate != null) {
+                    onContinue(
+                        dateFormatter.format(Date(startDate!!)),
+                        dateFormatter.format(Date(endDate!!))
+                    )
+                }
+            },
+            enabled = startDate != null && endDate != null,
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (startDate != null && endDate != null) DarkBlue else Color(
-                    0xFFEEEEEE
-                ),
-                contentColor = if (startDate != null && endDate != null) Color.White else Color.LightGray
+                containerColor = DarkBlue,
+                disabledContainerColor = Color(0xFFEEEEEE),
+                contentColor = Color.White,
+                disabledContentColor = Color.LightGray
             )
         ) {
             Text(
@@ -410,7 +420,7 @@ fun ChooseDatesContent(onContinue: () -> Unit) {
 }
 
 @Composable
-fun HowManyScreensContent(onContinue: () -> Unit) {
+fun HowManyScreensContent(onContinue: (Int) -> Unit) {
     var screenCount by remember { mutableIntStateOf(1) }
 
     Column(
@@ -482,7 +492,7 @@ fun HowManyScreensContent(onContinue: () -> Unit) {
         Spacer(modifier = Modifier.height(48.dp))
 
         Button(
-            onClick = onContinue,
+            onClick = { onContinue(screenCount) },
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
