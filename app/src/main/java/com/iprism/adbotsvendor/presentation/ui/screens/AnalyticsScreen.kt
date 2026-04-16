@@ -38,7 +38,7 @@ import com.iprism.adbotsvendor.presentation.viewmodels.AnalyticsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun AnalyticsScreen(navController: NavHostController, viewModel : AnalyticsViewModel = hiltViewModel()) {
+fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications : () -> Unit, onNavigateToPromotionDetails : () -> Unit, viewModel : AnalyticsViewModel = hiltViewModel()) {
 
     val analytics by viewModel.analytics.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -126,7 +126,7 @@ fun AnalyticsScreen(navController: NavHostController, viewModel : AnalyticsViewM
                         fontSize = 12.sp
                     )
                 }
-                IconButton(onClick = { navController.navigate("wallet") }) {
+                IconButton(onClick = { onNavigateToWallet() }) {
                     Image(
                         painter = painterResource(R.drawable.wallet_img),
                         contentDescription = "wallet",
@@ -134,7 +134,7 @@ fun AnalyticsScreen(navController: NavHostController, viewModel : AnalyticsViewM
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                IconButton(onClick = { navController.navigate("notifications") }) {
+                IconButton(onClick = { onNavigateToNotifications() }) {
                     Image(
                         painter = painterResource(R.drawable.notifications_img),
                         contentDescription = "notifications",
@@ -162,7 +162,7 @@ fun AnalyticsScreen(navController: NavHostController, viewModel : AnalyticsViewM
                     if (index >= analytics.size - 1) {
                         viewModel.fetchAnalytics()
                     }
-                    PromotionCardInAnalytics({ navController.navigate("promotion_details") }, promotion)
+                    PromotionCardInAnalytics({ onNavigateToPromotionDetails() }, promotion)
                 }
 
                 if (isPaginationLoading) {
@@ -286,16 +286,5 @@ fun GradientDivider() {
                     )
                 )
             )
-    )
-}
-
-@Preview
-@Composable
-fun AnalyticsScreenPreview() {
-    AnalyticsScreen(
-        navController = NavHostController(
-            LocalContext
-                .current
-        )
     )
 }
