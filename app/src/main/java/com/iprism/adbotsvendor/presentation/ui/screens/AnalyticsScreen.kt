@@ -155,6 +155,22 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+            if (uiState is UiState.Error && analytics.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = (uiState as UiState.Error).message,
+                        modifier = Modifier.padding(16.dp),
+                        color = Color.Red,
+                        fontFamily = MontserratFamily,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -180,16 +196,6 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
                         }
                     }
                 }
-            }
-
-            if (uiState is UiState.Error && analytics.isEmpty()) {
-                Text(
-                    text = (uiState as UiState.Error).message,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.CenterHorizontally),
-                    color = BLACK
-                )
             }
         }
     }
