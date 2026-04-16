@@ -31,7 +31,6 @@ import com.iprism.adbotsvendor.utils.UiState
 @Composable
 fun PromotionDetailsScreen(
     onBack : () -> Unit,
-    promotionId: String,
     viewModel: PromotionDetailsViewModel = hiltViewModel()
 ) {
     val redColor = Color(0xFFEF4444)
