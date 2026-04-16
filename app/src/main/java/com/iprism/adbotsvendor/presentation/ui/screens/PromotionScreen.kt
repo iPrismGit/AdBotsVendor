@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +68,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
 import com.iprism.adbotsvendor.utils.UiState
+import kotlinx.coroutines.flow.collectLatest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -85,11 +88,27 @@ fun PromotionScreen(
     var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
     var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
 
+    val context = LocalContext.current
     val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
     val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
 
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
+    val sheetState = rememberModalBottomSheetState()
+
     LaunchedEffect(Unit) {
         viewModel.fetchDropDowns()
+        viewModel.validationEvent.collectLatest { isValid ->
+            if (isValid) {
+                showBottomSheet = true
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.toastMessage.collectLatest { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     val cities = remember(dropDownsState) {
@@ -122,10 +141,6 @@ fun PromotionScreen(
             selectedArea = null
         }
     }
-
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
-    val sheetState = rememberModalBottomSheetState()
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -253,7 +268,14 @@ fun PromotionScreen(
 
             Button(
                 onClick = {
-                    showBottomSheet = true
+                    viewModel.validateBusinessDetails(
+                        name = yourName,
+                        businessName = businessName,
+                        mobile = mobileNumber,
+                        city = selectedCity?.name,
+                        area = selectedArea?.name,
+                        category = selectedBusinessCat?.name
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

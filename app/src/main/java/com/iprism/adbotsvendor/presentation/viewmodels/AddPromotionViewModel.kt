@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +32,39 @@ class AddPromotionViewModel @Inject constructor(
 
     private val _areasResponse = MutableStateFlow<UiState<DropDownsApiResponse>>(UiState.Idle)
     val areasResponse: StateFlow<UiState<DropDownsApiResponse>> = _areasResponse
+
+    private val _validationEvent = MutableSharedFlow<Boolean>()
+    val validationEvent = _validationEvent.asSharedFlow()
+
+    private val _toastMessage = MutableSharedFlow<String>()
+    val toastMessage = _toastMessage.asSharedFlow()
+
+    fun validateBusinessDetails(
+        name: String,
+        businessName: String,
+        mobile: String,
+        city: String?,
+        area: String?,
+        category: String?
+    ) {
+        val error = when {
+            name.isBlank() -> "Please enter your name"
+            businessName.isBlank() -> "Please enter business name"
+            mobile.length != 10 -> "Please enter a valid 10-digit mobile number"
+            city == null -> "Please select a city"
+            area == null -> "Please select an area"
+            category == null -> "Please select a business category"
+            else -> null
+        }
+
+        viewModelScope.launch {
+            if (error != null) {
+                _toastMessage.emit(error)
+            } else {
+                _validationEvent.emit(true)
+            }
+        }
+    }
 
     fun fetchDropDowns() {
         viewModelScope.launch {
