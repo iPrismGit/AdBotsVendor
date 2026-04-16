@@ -25,8 +25,6 @@ class PromotionDetailsViewModel @Inject constructor(
     val response: StateFlow<UiState<PromotionDetailsApiResponse>> = _response
 
     fun fetchPromotionDetails(promotionId: String) {
-        if (_response.value is UiState.Loading) return
-        
         viewModelScope.launch {
             _response.value = UiState.Loading
             try {

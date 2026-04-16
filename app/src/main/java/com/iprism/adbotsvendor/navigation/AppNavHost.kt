@@ -91,7 +91,7 @@ fun AppNavHost(
             }
             composable(Screen.PromotionDetails.route) { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id") ?: ""
-                PromotionDetailsScreen(navController, id)
+                PromotionDetailsScreen({navController.popBackStack()}, id)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(navController)
