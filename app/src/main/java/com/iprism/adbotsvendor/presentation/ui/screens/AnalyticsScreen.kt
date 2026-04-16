@@ -38,7 +38,7 @@ import com.iprism.adbotsvendor.presentation.viewmodels.AnalyticsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications : () -> Unit, onNavigateToPromotionDetails : () -> Unit, viewModel : AnalyticsViewModel = hiltViewModel()) {
+fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications : () -> Unit, onNavigateToPromotionDetails : (String) -> Unit, viewModel : AnalyticsViewModel = hiltViewModel()) {
 
     val analytics by viewModel.analytics.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -162,7 +162,7 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
                     if (index >= analytics.size - 1) {
                         viewModel.fetchAnalytics()
                     }
-                    PromotionCardInAnalytics({ onNavigateToPromotionDetails() }, promotion)
+                    PromotionCardInAnalytics({ onNavigateToPromotionDetails(promotion.id) }, promotion)
                 }
 
                 if (isPaginationLoading) {

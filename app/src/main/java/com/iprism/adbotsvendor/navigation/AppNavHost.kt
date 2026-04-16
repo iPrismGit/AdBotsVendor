@@ -87,10 +87,11 @@ fun AppNavHost(
                 AnalyticsScreen(
                     { navController.navigate(Screen.Wallet.route) },
                     { navController.navigate(Screen.Notifications.route) },
-                    { navController.navigate(Screen.PromotionDetails.route) })
+                    { id -> navController.navigate(Screen.PromotionDetails.createRoute(id)) })
             }
-            composable(Screen.PromotionDetails.route) {
-                PromotionDetailsScreen(navController)
+            composable(Screen.PromotionDetails.route) { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id") ?: ""
+                PromotionDetailsScreen(navController, id)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(navController)
