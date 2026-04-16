@@ -13,7 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
-import com.iprism.adbotsvendor.presentation.ui.screens.BusinessDetailsScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.PromotionScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ContactUsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.LoginScreen
@@ -120,7 +120,7 @@ fun AppNavHost(
                 )
             }
             composable(Screen.BusinessDetails.route) {
-                BusinessDetailsScreen(
+                PromotionScreen(
                     { navController.popBackStack() },
                     { navController.navigate(Screen.Preview.route) })
             }

@@ -65,7 +65,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusinessDetailsScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
+fun PromotionScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
