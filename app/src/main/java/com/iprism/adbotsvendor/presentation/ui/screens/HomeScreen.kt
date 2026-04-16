@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.Banners
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
@@ -34,7 +33,13 @@ import com.iprism.adbotsvendor.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onNavigateToWallet: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
+    onNavigateToAnalytics: () -> Unit,
+    onNavigateToPromotion: () -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
 
     val scrollState = rememberScrollState()
     val state by homeViewModel.response.collectAsStateWithLifecycle()
@@ -122,7 +127,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
                         fontSize = 12.sp
                     )
                 }
-                IconButton(onClick = { navController.navigate("wallet") }) {
+                IconButton(onClick = { onNavigateToWallet() }) {
                     Image(
                         painter = painterResource(R.drawable.wallet_img),
                         contentDescription = "wallet",
@@ -130,7 +135,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                IconButton(onClick = { navController.navigate("notifications") }) {
+                IconButton(onClick = { onNavigateToNotifications() }) {
                     Image(
                         painter = painterResource(R.drawable.notifications_img),
                         contentDescription = "notifications",
@@ -179,7 +184,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { navController.navigate("analytics") },
+                    onClick = { onNavigateToAnalytics() },
                     modifier = Modifier
                         .weight(1f),
                     shape = RoundedCornerShape(12.dp),
@@ -196,7 +201,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = 
                 }
 
                 Button(
-                    onClick = { navController.navigate("business_details") },
+                    onClick = { onNavigateToPromotion() },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .weight(1f),

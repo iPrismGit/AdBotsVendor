@@ -81,7 +81,10 @@ fun AppNavHost(
                 )
             }
             composable(Screen.Home.route) {
-                HomeScreen(navController)
+                HomeScreen({ navController.navigate(Screen.Wallet.route) },
+                    { navController.navigate(Screen.Notifications.route) },
+                    { navController.navigate(Screen.Analytics.route) },
+                    { navController.navigate(Screen.BusinessDetails.route) })
             }
             composable(Screen.Analytics.route) {
                 AnalyticsScreen(
@@ -90,7 +93,7 @@ fun AppNavHost(
                     { id -> navController.navigate(Screen.PromotionDetails.createRoute(id)) })
             }
             composable(Screen.PromotionDetails.route) {
-                PromotionDetailsScreen({navController.popBackStack()})
+                PromotionDetailsScreen({ navController.popBackStack() })
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(navController)
@@ -99,7 +102,8 @@ fun AppNavHost(
                 NotificationsScreen(navController)
             }
             composable(Screen.Wallet.route) {
-                WalletScreen({ navController.popBackStack() },
+                WalletScreen(
+                    { navController.popBackStack() },
                     { navController.navigate(Screen.WalletHistory.route) })
             }
             composable(Screen.WalletHistory.route) {
