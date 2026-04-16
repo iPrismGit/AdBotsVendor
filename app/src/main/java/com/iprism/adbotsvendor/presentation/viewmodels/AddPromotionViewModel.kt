@@ -3,6 +3,7 @@ package com.iprism.adbotsvendor.presentation.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.iprism.adbotsvendor.data.models.User
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
@@ -54,6 +55,14 @@ class AddPromotionViewModel @Inject constructor(
 
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
+
+    private var userCache: User? = null
+
+    private suspend fun getUser(): User {
+        return userCache ?: dataStoreManager.userDetails.first().also {
+            userCache = it
+        }
+    }
 
     fun updateName(name: String) = _formState.update { it.copy(name = name) }
     fun updateBusinessName(businessName: String) = _formState.update { it.copy(businessName = businessName) }
@@ -121,7 +130,7 @@ class AddPromotionViewModel @Inject constructor(
         viewModelScope.launch {
             _dropDownsResponse.value = UiState.Loading
             try {
-                val user = dataStoreManager.userDetails.first()
+                val user = getUser()
                 val request = DropDownsRequest(
                     userId = user.userId?.toIntOrNull() ?: 0,
                     viewType = "view",
@@ -144,7 +153,7 @@ class AddPromotionViewModel @Inject constructor(
         viewModelScope.launch {
             _areasResponse.value = UiState.Loading
             try {
-                val user = dataStoreManager.userDetails.first()
+                val user = getUser()
                 val request = DropDownsRequest(
                     userId = user.userId?.toIntOrNull() ?: 0,
                     viewType = "view_area",
