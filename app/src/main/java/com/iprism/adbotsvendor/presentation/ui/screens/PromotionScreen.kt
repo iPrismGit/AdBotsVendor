@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +50,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
+import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
@@ -59,13 +64,19 @@ import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
+import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
+import com.iprism.adbotsvendor.utils.UiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PromotionScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
+fun PromotionScreen(
+    onBack: () -> Unit,
+    onContinueClick: () -> Unit,
+    viewModel: AddPromotionViewModel = hiltViewModel()
+) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
@@ -73,6 +84,44 @@ fun PromotionScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
     var selectedCity by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
     var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
     var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
+
+    val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
+    val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchDropDowns()
+    }
+
+    val cities = remember(dropDownsState) {
+        if (dropDownsState is UiState.Success) {
+            (dropDownsState as UiState.Success).data.response.cities.map {
+                SpinnerItem(it.cityName, it.id.toIntOrNull() ?: 0)
+            }
+        } else emptyList()
+    }
+
+    val categories = remember(dropDownsState) {
+        if (dropDownsState is UiState.Success) {
+            (dropDownsState as UiState.Success).data.response.categories.map {
+                SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
+            }
+        } else emptyList()
+    }
+
+    val areas = remember(areasState) {
+        if (areasState is UiState.Success) {
+            (areasState as UiState.Success).data.response.areas.map {
+                SpinnerItem(it.name, it.id.toIntOrNull() ?: 0)
+            }
+        } else emptyList()
+    }
+
+    LaunchedEffect(selectedCity) {
+        selectedCity?.let {
+            viewModel.fetchAreas(it.id.toString())
+            selectedArea = null
+        }
+    }
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var bottomSheetStep by remember { mutableIntStateOf(0) } // 0: Choose Dates, 1: How Many Screens
@@ -110,113 +159,119 @@ fun PromotionScreen(onBack: () -> Unit, onContinueClick: () -> Unit) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
-        IconButton(
-            onClick = { onBack() },
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.back_img),
-                contentDescription = "Back",
-                tint = BLACK,
-                modifier = Modifier.size(28.dp)
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(12.dp)
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
-            Text("Business Details", style = MaterialTheme.typography.headlineMedium)
-            Spacer(Modifier.height(16.dp))
-            TitleText(stringResource(R.string.your_name))
-            Spacer(Modifier.height(12.dp))
+            IconButton(
+                onClick = { onBack() },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.back_img),
+                    contentDescription = "Back",
+                    tint = BLACK,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text("Business Details", style = MaterialTheme.typography.headlineMedium)
+                Spacer(Modifier.height(16.dp))
+                TitleText(stringResource(R.string.your_name))
+                Spacer(Modifier.height(12.dp))
 
-            CustomTextField(
-                yourName,
-                stringResource(R.string.enter),
-                KeyboardType.Text
-            ) { yourName = it }
+                CustomTextField(
+                    yourName,
+                    stringResource(R.string.enter),
+                    KeyboardType.Text
+                ) { yourName = it }
 
-            Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
-            TitleText(stringResource(R.string.business_name))
-            Spacer(Modifier.height(12.dp))
+                TitleText(stringResource(R.string.business_name))
+                Spacer(Modifier.height(12.dp))
 
-            CustomTextField(
-                businessName,
-                stringResource(R.string.enter),
-                KeyboardType.Text
-            ) { businessName = it }
-            Spacer(Modifier.height(12.dp))
+                CustomTextField(
+                    businessName,
+                    stringResource(R.string.enter),
+                    KeyboardType.Text
+                ) { businessName = it }
+                Spacer(Modifier.height(12.dp))
 
-            TitleText(stringResource(R.string.mobile_number))
-            Spacer(Modifier.height(12.dp))
-            CustomTextField(
-                mobileNumber,
-                stringResource(R.string.enter),
-                KeyboardType.Phone
-            ) { mobileNumber = it }
+                TitleText(stringResource(R.string.mobile_number))
+                Spacer(Modifier.height(12.dp))
+                CustomTextField(
+                    mobileNumber,
+                    stringResource(R.string.enter),
+                    KeyboardType.Phone
+                ) { mobileNumber = it }
 
-            Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
-            TitleText(stringResource(R.string.city))
-            Spacer(Modifier.height(12.dp))
-            CustomSpinner(
-                label = stringResource(R.string.choose),
-                items = cities,
-                selectedItem = selectedCity,
-                onItemSelected = {
-                    selectedCity = it
-                }
-            )
-            Spacer(Modifier.height(12.dp))
-            TitleText(stringResource(R.string.area))
-            Spacer(Modifier.height(12.dp))
-            CustomSpinner(
-                label = stringResource(R.string.choose),
-                items = cities, // Use appropriate list if different
-                selectedItem = selectedArea,
-                onItemSelected = {
-                    selectedArea = it
-                }
-            )
-            Spacer(Modifier.height(12.dp))
-            TitleText(stringResource(R.string.business_category))
-            Spacer(Modifier.height(12.dp))
-            CustomSpinner(
-                label = stringResource(R.string.choose),
-                items = cities, // Use appropriate list if different
-                selectedItem = selectedBusinessCat,
-                onItemSelected = {
-                    selectedBusinessCat = it
-                }
-            )
-            Spacer(Modifier.height(12.dp))
+                TitleText(stringResource(R.string.city))
+                Spacer(Modifier.height(12.dp))
+                CustomSpinner(
+                    label = stringResource(R.string.choose),
+                    items = cities,
+                    selectedItem = selectedCity,
+                    onItemSelected = {
+                        selectedCity = it
+                    }
+                )
+                Spacer(Modifier.height(12.dp))
+                TitleText(stringResource(R.string.area))
+                Spacer(Modifier.height(12.dp))
+                CustomSpinner(
+                    label = stringResource(R.string.choose),
+                    items = areas,
+                    selectedItem = selectedArea,
+                    onItemSelected = {
+                        selectedArea = it
+                    }
+                )
+                Spacer(Modifier.height(12.dp))
+                TitleText(stringResource(R.string.business_category))
+                Spacer(Modifier.height(12.dp))
+                CustomSpinner(
+                    label = stringResource(R.string.choose),
+                    items = categories,
+                    selectedItem = selectedBusinessCat,
+                    onItemSelected = {
+                        selectedBusinessCat = it
+                    }
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+
+            Button(
+                onClick = {
+                    showBottomSheet = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, bottom = 12.dp, end = 12.dp)
+                    .imePadding(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            ) {
+                Text(
+                    "Continue",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
 
-        Button(
-            onClick = {
-                showBottomSheet = true
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, bottom = 12.dp, end = 12.dp)
-                .imePadding(),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
-        ) {
-            Text(
-                "Continue",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(8.dp)
-            )
+        if (dropDownsState is UiState.Loading) {
+            LoadingScreen()
         }
     }
 }
@@ -407,14 +462,14 @@ fun HowManyScreensContent(onContinue: () -> Unit) {
         Button(
             onClick = onContinue,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
         ) {
             Text(
                 text = "Continue",
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(8.dp)
             )
         }
 
@@ -427,10 +482,10 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(8.dp))
+            .height(48.dp)
+            .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
             .clickable { onClick() }
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 12.dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
@@ -442,21 +497,15 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
                 text = text,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
-                color = if (text == "Choose") BLACK1 else Color.Black,
+                color = if (text == "Choose") Color.LightGray else BLACK,
                 fontSize = 12.sp
             )
             Icon(
                 painter = painterResource(R.drawable.calender_img),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = Color.Black
+                modifier = Modifier.size(20.dp),
+                tint = BLACK1
             )
         }
     }
 }
-
-private val cities = listOf(
-    SpinnerItem("Hyderabad", 1),
-    SpinnerItem("Bengaluru", 2),
-    SpinnerItem("Vizag", 3),
-)
