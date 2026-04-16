@@ -38,10 +38,6 @@ fun PromotionDetailsScreen(
     val dividerColor = Color(0xFFEEEEEE)
     val state by viewModel.response.collectAsStateWithLifecycle()
 
-    LaunchedEffect(promotionId) {
-        viewModel.fetchPromotionDetails(promotionId)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
