@@ -2,6 +2,7 @@ package com.iprism.adbotsvendor.data.remote
 
 import com.iprism.adbotsvendor.data.models.LoginApiResponse
 import com.iprism.adbotsvendor.data.models.LoginRequest
+import com.iprism.adbotsvendor.data.models.addpromotion.AddPromotionApiResponse
 import com.iprism.adbotsvendor.data.models.analytics.AnalyticsApiResponse
 import com.iprism.adbotsvendor.data.models.analytics.AnalyticsRequest
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesApiResponse
@@ -21,8 +22,12 @@ import com.iprism.adbotsvendor.data.models.wallet.WalletRequest
 import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryApiResponse
 import com.iprism.adbotsvendor.data.models.wallethistory.WalletHistoryRequest
 import com.iprism.adbotsvendor.utils.Constants
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 interface HealthDrinksService {
 
@@ -55,4 +60,29 @@ interface HealthDrinksService {
 
     @POST(Constants.PROMOTION_CALCULATION_ENDPOINT)
     suspend fun fetchPromotionCalculations(@Body request : PromotionCalculationRequest) : PromotionCalcilationApiResponse
+
+    @Multipart
+    @POST(Constants.ADD_PROMOTION_ENDPOINT)
+    suspend fun addPromotion(
+        @Part("user_id") userId: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("business_name") businessName: RequestBody,
+        @Part("mobile") mobile: RequestBody,
+        @Part("areas") areas: RequestBody,
+        @Part("areas_count") areasCount: RequestBody,
+        @Part("categories") categories: RequestBody,
+        @Part("start_date") startDate: RequestBody,
+        @Part("end_date") endDate: RequestBody,
+        @Part("screens") screens: RequestBody,
+        @Part("total_amount") totalAmount: RequestBody,
+        @Part("wallet_amount") walletAmount: RequestBody,
+        @Part("remaining_amount") remainingAmount: RequestBody,
+        @Part("sgst") sgst: RequestBody,
+        @Part("cgst") cgst: RequestBody,
+        @Part("play_time") playTime: RequestBody,
+        @Part("transaction_id") transactionId: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("categories_count") categoriesCount: RequestBody,
+        @Part vendorVideo: MultipartBody.Part
+    ): AddPromotionApiResponse
 }
