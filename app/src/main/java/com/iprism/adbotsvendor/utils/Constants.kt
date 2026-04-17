@@ -13,4 +13,5 @@ object Constants {
     const val WALLET_HISTORY_ENDPOINT = "vendor_wallet_history"
     const val ANALYTICS_ENDPOINT = "vendor_promotions"
     const val PROMOTION_DETAILS_ENDPOINT = "vendor_promotion_view"
+    const val PROMOTION_CALCULATION_ENDPOINT = "vendor_promotion_calculations"
 }
