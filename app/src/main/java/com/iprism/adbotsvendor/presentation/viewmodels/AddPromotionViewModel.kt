@@ -132,6 +132,7 @@ class AddPromotionViewModel @Inject constructor(
             Start Date: ${state.startDate}
             End Date: ${state.endDate}
             Screen Count: ${state.screenCount}
+            Video: ${state.videoUri}
         """.trimIndent())
     }
 
