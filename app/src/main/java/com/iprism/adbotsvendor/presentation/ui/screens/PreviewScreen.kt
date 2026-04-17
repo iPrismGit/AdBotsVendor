@@ -30,10 +30,20 @@ import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
+
 @Composable
-fun PreviewScreen(navController: NavHostController) {
+fun PreviewScreen(
+    navController: NavHostController,
+    viewModel: AddPromotionViewModel
+) {
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
     var isWalletUsed by remember { mutableStateOf(false) }
     var isTermsAccepted by remember { mutableStateOf(false) }
+
+    // Dynamic charges calculation: e.g., ₹1000 per screen
+    val charges = formState.screenCount * 1000
 
     Column(
         modifier = Modifier
@@ -83,12 +93,12 @@ fun PreviewScreen(navController: NavHostController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("Charges", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
-                        Text("₹1000", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
+                        Text("₹$charges", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Start Date : 21-03-2026", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Text("Start Date : ${formState.startDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("End Date : 21-04-2026", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Text("End Date : ${formState.endDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                 }
                 
                 Button(
@@ -174,7 +184,7 @@ fun PreviewScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Name", style = MaterialTheme.typography.bodySmall, color = BLACK1)
             Spacer(modifier = Modifier.height(8.dp))
-            CustomTextField("Ganesh", "", onValueChange = {})
+            CustomTextField(formState.name, "", onValueChange = {})
             Spacer(modifier = Modifier.height(12.dp))
             Text("Mobile Number", style = MaterialTheme.typography.bodySmall, color = BLACK1)
             Spacer(modifier = Modifier.height(8.dp))
@@ -193,7 +203,7 @@ fun PreviewScreen(navController: NavHostController) {
                     )
                 )
                 OutlinedTextField(
-                    value = "89375447487",
+                    value = formState.mobile,
                     onValueChange = {},
                     readOnly = true,
                     textStyle = MaterialTheme.typography.bodySmall,
@@ -233,11 +243,18 @@ fun PreviewScreen(navController: NavHostController) {
 
         // Continue Button
         Button(
-            onClick = { navController.navigate("home") },
+            onClick = { 
+                viewModel.submitPromotion()
+                navController.navigate("home") 
+            },
+            enabled = isTermsAccepted,
             modifier = Modifier
                 .fillMaxWidth().padding(12.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = DarkBlue,
+                disabledContainerColor = Color.LightGray
+            )
         ) {
             Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
         }

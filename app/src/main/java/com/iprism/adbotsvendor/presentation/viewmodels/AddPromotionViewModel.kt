@@ -107,6 +107,9 @@ class AddPromotionViewModel @Inject constructor(
 
     fun setScreenCount(count: Int) {
         _formState.update { it.copy(screenCount = count) }
+    }
+
+    fun submitPromotion() {
         logAllData()
     }
 

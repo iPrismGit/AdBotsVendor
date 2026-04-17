@@ -3,6 +3,9 @@ package com.iprism.adbotsvendor.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -120,12 +123,19 @@ fun AppNavHost(
                 )
             }
             composable(Screen.BusinessDetails.route) {
+                val viewModel: AddPromotionViewModel = hiltViewModel()
                 PromotionScreen(
-                    { navController.popBackStack() },
-                    { navController.navigate(Screen.Preview.route) })
+                    onBack = { navController.popBackStack() },
+                    onContinueClick = { navController.navigate(Screen.Preview.route) },
+                    viewModel = viewModel
+                )
             }
-            composable(Screen.Preview.route) {
-                PreviewScreen(navController)
+            composable(Screen.Preview.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.BusinessDetails.route)
+                }
+                val viewModel: AddPromotionViewModel = hiltViewModel(parentEntry)
+                PreviewScreen(navController, viewModel)
             }
             composable(Screen.Register.route) { backStackEntry ->
                 val mobile = backStackEntry.arguments?.getString("mobile") ?: ""
