@@ -64,6 +64,7 @@ interface HealthDrinksService {
     @Multipart
     @POST(Constants.ADD_PROMOTION_ENDPOINT)
     suspend fun addPromotion(
+        @Part("auth_token") token: RequestBody,
         @Part("user_id") userId: RequestBody,
         @Part("name") name: RequestBody,
         @Part("business_name") businessName: RequestBody,

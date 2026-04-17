@@ -454,7 +454,7 @@ fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
     var endDate by remember { mutableStateOf<Long?>(null) }
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
-    val dateFormatter = remember { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) }
+    val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
     if (showStartDatePicker) {
         val datePickerState = rememberDatePickerState()

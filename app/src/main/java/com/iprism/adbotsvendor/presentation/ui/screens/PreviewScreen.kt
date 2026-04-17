@@ -2,6 +2,7 @@ package com.iprism.adbotsvendor.presentation.ui.screens
 
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,10 +49,29 @@ fun PreviewScreen(
 ) {
     val formState by viewModel.formState.collectAsStateWithLifecycle()
     val calculationState by previewViewModel.response.collectAsStateWithLifecycle()
+    val addPromotionState by previewViewModel.addPromotionResponse.collectAsStateWithLifecycle()
+    
     var isWalletUsed by remember { mutableStateOf(false) }
     var isTermsAccepted by remember { mutableStateOf(false) }
     var showVideoPreview by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        previewViewModel.toastMessage.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(addPromotionState) {
+        if (addPromotionState is UiState.Success) {
+            Toast.makeText(context, "Promotion added successfully!", Toast.LENGTH_SHORT).show()
+            navController.navigate("home") {
+                popUpTo("preview") { inclusive = true }
+            }
+        } else if (addPromotionState is UiState.Error) {
+            Toast.makeText(context, (addPromotionState as UiState.Error).message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(formState.areaId, formState.categoryId) {
         if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty()) {
@@ -298,10 +318,36 @@ fun PreviewScreen(
 
         // Continue Button
         Button(
-            onClick = { 
-                viewModel.submitPromotion()
+            onClick = {
+                val pDetails = (calculationState as? UiState.Success)?.data?.response?.paymentDetails
+                val currentWalletAmount = pDetails?.wallet ?: 0
+                val usedWalletAmount = if (isWalletUsed) currentWalletAmount else 0
+                val remainingAmountValue = totalAmount - usedWalletAmount
+
+                previewViewModel.submitPromotion(
+                    context = context,
+                    name = formState.name,
+                    businessName = formState.businessName,
+                    mobile = formState.mobile,
+                    cityId = formState.cityId,
+                    areaId = formState.areaId,
+                    categoryId = formState.categoryId,
+                    startDate = formState.startDate,
+                    endDate = formState.endDate,
+                    screenCount = formState.screenCount,
+                    totalAmount = totalAmount.toString(),
+                    walletAmount = usedWalletAmount.toString(),
+                    remainingAmount = remainingAmountValue.toString(),
+                    sgst = (pDetails?.sgst ?: 0).toString(),
+                    cgst = (pDetails?.cgst ?: 0).toString(),
+                    videoUri = formState.videoUri?.let { Uri.parse(it) },
+                    categoriesCount = 1,
+                    transactionId = "0",
+                    playTime = "1",
+                    areasCount = 1
+                )
             },
-            enabled = isTermsAccepted,
+            enabled = isTermsAccepted && addPromotionState !is UiState.Loading,
             modifier = Modifier
                 .fillMaxWidth().padding(12.dp),
             shape = RoundedCornerShape(12.dp),
@@ -310,7 +356,15 @@ fun PreviewScreen(
                 disabledContainerColor = Color.LightGray
             )
         ) {
-            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
+            if (addPromotionState is UiState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = White,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
+            }
         }
     }
 
