@@ -30,6 +30,7 @@ data class PromotionFormState(
     val areaName: String = "",
     val categoryId: String = "",
     val categoryName: String = "",
+    val videoUri: String? = null,
     val startDate: String = "",
     val endDate: String = "",
     val screenCount: Int = 1
@@ -76,6 +77,10 @@ class AddPromotionViewModel @Inject constructor(
     fun updateArea(id: String, name: String) = _formState.update { it.copy(areaId = id, areaName = name) }
     fun updateCategory(id: String, name: String) = _formState.update { it.copy(categoryId = id, categoryName = name) }
 
+    fun updateVideoUri(uri: String?) {
+        _formState.update { it.copy(videoUri = uri) }
+    }
+
     fun validateBusinessDetails() {
         val state = _formState.value
         val error = when {
@@ -85,6 +90,7 @@ class AddPromotionViewModel @Inject constructor(
             state.cityId.isBlank() -> "Please select a city"
             state.areaId.isBlank() -> "Please select an area"
             state.categoryId.isBlank() -> "Please select a business category"
+            state.videoUri == null -> "Please select a promotional video"
             else -> null
         }
 

@@ -1,6 +1,12 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,6 +25,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -28,11 +37,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,8 +61,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
@@ -86,6 +104,25 @@ fun PromotionScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var bottomSheetStep by remember { mutableIntStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
+
+    var showVideoPreview by remember { mutableStateOf(false) }
+
+    val videoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let { viewModel.updateVideoUri(it.toString()) }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        // Even if permission is denied, we can still try to launch the picker 
+        // as it often works without it on many Android versions.
+        videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+        if (!isGranted) {
+            Toast.makeText(context, "Continuing with limited access", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.validationEvent.collectLatest { isValid ->
@@ -236,6 +273,36 @@ fun PromotionScreen(
                     selectedItem = categories.find { it.id.toString() == formState.categoryId },
                     onItemSelected = { viewModel.updateCategory(it.id.toString(), it.name) }
                 )
+                Spacer(Modifier.height(16.dp))
+
+                TitleText("Promotional Video")
+                Spacer(Modifier.height(12.dp))
+                VideoUploadBox(
+                    videoUri = formState.videoUri,
+                    onUploadClick = {
+                        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Manifest.permission.READ_MEDIA_VIDEO
+                        } else {
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        }
+
+                        when {
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                                // Modern Android: Photo Picker doesn't need permissions
+                                videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+                            }
+                            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED -> {
+                                videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+                            }
+                            else -> {
+                                permissionLauncher.launch(permission)
+                            }
+                        }
+                    },
+                    onPreviewClick = { showVideoPreview = true },
+                    onDeleteClick = { viewModel.updateVideoUri(null) }
+                )
+
                 Spacer(Modifier.height(12.dp))
             }
 
@@ -258,6 +325,124 @@ fun PromotionScreen(
 
         if (dropDownsState is UiState.Loading) {
             LoadingScreen()
+        }
+
+        if (showVideoPreview && formState.videoUri != null) {
+            VideoPreviewDialog(
+                videoUri = formState.videoUri!!,
+                onDismiss = { showVideoPreview = false }
+            )
+        }
+    }
+}
+
+@Composable
+fun VideoUploadBox(
+    videoUri: String?,
+    onUploadClick: () -> Unit,
+    onPreviewClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
+            .background(White, RoundedCornerShape(12.dp))
+            .clickable(enabled = videoUri == null) { onUploadClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        if (videoUri == null) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    imageVector = Icons.Default.PlayCircle,
+                    contentDescription = null,
+                    tint = DarkBlue,
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+                Text("Upload Promotional Video", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayCircle,
+                    contentDescription = null,
+                    tint = DarkBlue,
+                    modifier = Modifier.size(48.dp).clickable { onPreviewClick() }
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Video Selected",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkBlue
+                )
+                TextButton(onClick = onDeleteClick) {
+                    Text("Remove Video", color = Color.Red)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun VideoPreviewDialog(
+    videoUri: String,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            setMediaItem(MediaItem.fromUri(videoUri))
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = Color.Black
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                AndroidView(
+                    factory = {
+                        PlayerView(it).apply {
+                            player = exoPlayer
+                            useController = true
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = Color.White
+                    )
+                }
+            }
         }
     }
 }
