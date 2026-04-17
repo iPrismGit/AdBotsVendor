@@ -1,5 +1,7 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
+import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalcilationApiResponse
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
@@ -31,19 +35,63 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.PreviewViewModel
+import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
 fun PreviewScreen(
     navController: NavHostController,
-    viewModel: AddPromotionViewModel
+    viewModel: AddPromotionViewModel,
+    previewViewModel: PreviewViewModel = hiltViewModel()
 ) {
     val formState by viewModel.formState.collectAsStateWithLifecycle()
+    val calculationState by previewViewModel.response.collectAsStateWithLifecycle()
     var isWalletUsed by remember { mutableStateOf(false) }
     var isTermsAccepted by remember { mutableStateOf(false) }
+    var showVideoPreview by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    // Dynamic charges calculation: e.g., ₹1000 per screen
-    val charges = formState.screenCount * 1000
+    LaunchedEffect(formState.areaId, formState.categoryId) {
+        if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty()) {
+            previewViewModel.fetchCalculations(
+                minutes = "1",
+                areas = formState.areaId,
+                categories = formState.categoryId
+            )
+        }
+    }
+
+    val fileName = remember(formState.videoUri) {
+        formState.videoUri?.let { uriString ->
+            val uri = Uri.parse(uriString)
+            var result: String? = null
+            if (uri.scheme == "content") {
+                val cursor = context.contentResolver.query(uri, null, null, null, null)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        if (index != -1) {
+                            result = it.getString(index)
+                        }
+                    }
+                }
+            }
+            if (result == null) {
+                result = uri.path
+                val cut = result?.lastIndexOf('/') ?: -1
+                if (cut != -1) {
+                    result = result?.substring(cut + 1)
+                }
+            }
+            result
+        } ?: "No file selected"
+    }
+
+    val paymentDetails = (calculationState as? UiState.Success<PromotionCalcilationApiResponse>)?.data?.response?.paymentDetails
+    val totalAmount = paymentDetails?.totalAmount ?: 0
+    val walletAmount = paymentDetails?.wallet ?: 0
 
     Column(
         modifier = Modifier
@@ -93,7 +141,7 @@ fun PreviewScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("Charges", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
-                        Text("₹$charges", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
+                        Text("₹$totalAmount", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Start Date : ${formState.startDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
@@ -133,14 +181,14 @@ fun PreviewScreen(
                     modifier = Modifier.size(32.dp),
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("File6353737.MP4", modifier = Modifier.weight(1f), fontSize = 12.sp, color = BLACK1, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
+                Text(fileName, modifier = Modifier.weight(1f), fontSize = 12.sp, color = BLACK1, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
                 Text(
                     "Preview",
                     color = LightBlue2,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = MontserratFamily,
-                    modifier = Modifier.clickable { /* Preview video */ }
+                    modifier = Modifier.clickable { showVideoPreview = true }
                 )
             }
 
@@ -168,7 +216,7 @@ fun PreviewScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         Text("Use Wallet Funds", fontSize = 10.sp, color = BLACK, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("₹1000", fontWeight = FontWeight.Normal, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
+                        Text("₹$walletAmount", fontWeight = FontWeight.Normal, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
                     }
                     Checkbox(
                         checked = isWalletUsed,
@@ -241,11 +289,17 @@ fun PreviewScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
+        if (showVideoPreview && formState.videoUri != null) {
+            VideoPreviewDialog(
+                videoUri = formState.videoUri!!,
+                onDismiss = { showVideoPreview = false }
+            )
+        }
+
         // Continue Button
         Button(
             onClick = { 
                 viewModel.submitPromotion()
-                navController.navigate("home") 
             },
             enabled = isTermsAccepted,
             modifier = Modifier
@@ -258,5 +312,13 @@ fun PreviewScreen(
         ) {
             Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
         }
+    }
+
+    if (calculationState is UiState.Loading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else if (calculationState is UiState.Error) {
+        // Show error message if needed
     }
 }
