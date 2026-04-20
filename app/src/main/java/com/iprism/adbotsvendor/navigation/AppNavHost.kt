@@ -28,6 +28,7 @@ import com.iprism.adbotsvendor.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.RegisterScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.SplashScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.ContentPageScreen
+import com.iprism.adbotsvendor.presentation.ui.screens.EditProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletHistoryScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletScreen
 
@@ -141,6 +142,15 @@ fun AppNavHost(
                 val mobile = backStackEntry.arguments?.getString("mobile") ?: ""
                 RegisterScreen(
                     mobile,
+                    { navController.popBackStack() },
+                    {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    })
+            }
+            composable(Screen.EditProfile.route) {
+                EditProfileScreen(
                     { navController.popBackStack() },
                     {
                         navController.navigate(Screen.Home.route) {

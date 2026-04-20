@@ -74,7 +74,7 @@ fun ProfileScreen(navController: NavHostController) {
                 color = Color.White
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = {navController.navigate("register")}) {
+            IconButton(onClick = {navController.navigate("edit_profile")}) {
                 Icon(
                     painter = painterResource(R.drawable.edit_icon),
                     contentDescription = "Edit",
@@ -120,7 +120,7 @@ fun ProfileScreen(navController: NavHostController) {
                 ProfileOptionItem(
                     icon = painterResource(R.drawable.profile_icon),
                     title = "Profile",
-                    navigate = { navController.navigate("register") }
+                    navigate = { navController.navigate("edit_profile") }
                 )
                 DottedDivider()
                 ProfileOptionItem(
