@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsvendor.data.models.LoginApiResponse
 import com.iprism.adbotsvendor.data.models.LoginRequest
+import com.iprism.adbotsvendor.data.models.otp.OtpRequest
+import com.iprism.adbotsvendor.data.models.otp.ResendOtpApiResponse
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
 import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
@@ -25,12 +27,16 @@ class OtpViewModel @Inject constructor(
     private val _loginResponse = MutableStateFlow<UiState<LoginApiResponse>>(UiState.Idle)
     val loginResponse: StateFlow<UiState<LoginApiResponse>> = _loginResponse
 
+    private val _resendOtpResponse = MutableStateFlow<UiState<ResendOtpApiResponse>>(UiState.Idle)
+    val resendOtpResponse: StateFlow<UiState<ResendOtpApiResponse>> = _resendOtpResponse
+
     private val _eventFlow = Channel<UiEvent>()
     val eventFlow = _eventFlow.receiveAsFlow()
 
     sealed class UiEvent {
-        class NavigateToRegister(mobile : String) : UiEvent()
+        class NavigateToRegister(val mobile: String) : UiEvent()
         object NavigateToHome : UiEvent()
+        data class ShowToast(val message: String) : UiEvent()
     }
 
     fun login(request: LoginRequest) {
@@ -56,9 +62,31 @@ class OtpViewModel @Inject constructor(
                     }
                 } else {
                     _loginResponse.value = UiState.Error(response.message)
+                    _eventFlow.send(UiEvent.ShowToast(response.message))
                 }
             } catch (e: Exception) {
                 _loginResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                _eventFlow.send(UiEvent.ShowToast(e.localizedMessage ?: "Unknown error"))
+            }
+        }
+    }
+
+    fun resendOtp(mobile: String) {
+        viewModelScope.launch {
+            _resendOtpResponse.value = UiState.Loading
+            try {
+                val request = OtpRequest(mobile)
+                val response = repository.resendOtp(request)
+                if (response.status) {
+                    _resendOtpResponse.value = UiState.Success(response)
+                    _eventFlow.send(UiEvent.ShowToast("${response.message} OTP: ${response.response.otp}"))
+                } else {
+                    _resendOtpResponse.value = UiState.Error(response.message)
+                    _eventFlow.send(UiEvent.ShowToast(response.message))
+                }
+            } catch (e: Exception) {
+                _resendOtpResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                _eventFlow.send(UiEvent.ShowToast(e.localizedMessage ?: "Unknown error"))
             }
         }
     }

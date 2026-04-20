@@ -45,8 +45,16 @@ fun OtpScreen(
     viewModel: OtpViewModel = hiltViewModel()
 ) {
     var enteredOtp by rememberSaveable { mutableStateOf("") }
+    var currentOtp by rememberSaveable { mutableStateOf(otp) }
     val context = LocalContext.current
     val state by viewModel.loginResponse.collectAsStateWithLifecycle()
+    val resendState by viewModel.resendOtpResponse.collectAsStateWithLifecycle()
+
+    LaunchedEffect(resendState) {
+        if (resendState is UiState.Success) {
+            currentOtp = (resendState as UiState.Success).data.response.otp
+        }
+    }
 
     var timerText by remember { mutableStateOf("00:30") }
     var isResendEnabled by remember { mutableStateOf(false) }
@@ -74,6 +82,10 @@ fun OtpScreen(
                 is OtpViewModel.UiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
+                is OtpViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
             }
         }
     }
@@ -158,7 +170,7 @@ fun OtpScreen(
                             fontSize = 14.sp,
                             modifier = Modifier.clickable(enabled = isResendEnabled) {
                                 isResendEnabled = false
-                                /* Resend logic */
+                                viewModel.resendOtp(mobile)
                             }
                         )
                     }
@@ -173,7 +185,7 @@ fun OtpScreen(
 
                 Button(
                     onClick = {
-                        if (otp == enteredOtp) {
+                        if (currentOtp == enteredOtp) {
                             val request = LoginRequest(
                                 playerId = "",
                                 appVersion = "",
@@ -190,10 +202,10 @@ fun OtpScreen(
                         .fillMaxWidth()
                         .imePadding(),
                     shape = RoundedCornerShape(12.dp),
-                    enabled = state !is UiState.Loading,
+                    enabled = state !is UiState.Loading && resendState !is UiState.Loading,
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
-                    if (state is UiState.Loading) {
+                    if (state is UiState.Loading || resendState is UiState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
