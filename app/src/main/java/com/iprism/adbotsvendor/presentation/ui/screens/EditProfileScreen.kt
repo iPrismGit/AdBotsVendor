@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +43,7 @@ import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
+import com.iprism.adbotsvendor.presentation.viewmodels.ProfileViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.RegisterViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -51,7 +51,7 @@ import com.iprism.adbotsvendor.utils.UiState
 fun EditProfileScreen(
     onBack: () -> Unit,
     onNavigateToHome: () -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
@@ -62,7 +62,7 @@ fun EditProfileScreen(
     var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
 
     val context = LocalContext.current
-    val registerState by viewModel.registerResponse.collectAsStateWithLifecycle()
+    val registerState by viewModel.profileResponse.collectAsStateWithLifecycle()
     val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
     val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
 
@@ -92,13 +92,15 @@ fun EditProfileScreen(
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                is RegisterViewModel.UiEvent.ShowToast -> {
+                is ProfileViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
                 RegisterViewModel.UiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
+
+                else -> {}
             }
         }
     }
@@ -202,7 +204,7 @@ fun EditProfileScreen(
 
         Button(
             onClick = {
-                viewModel.registerUser(
+                viewModel.updateProfile(
                     area =  selectedArea?.name ?: "",
                     city = selectedCity?.name ?: "",
                     businessName = businessName,

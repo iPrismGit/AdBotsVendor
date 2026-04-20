@@ -8,7 +8,7 @@ data class ProfileRequest(
 	val area: String,
 
 	@field:SerializedName("user_id")
-	val userId: Int,
+	val userId: String,
 
 	@field:SerializedName("bussiness_name")
 	val bussinessName: String,
@@ -21,9 +21,6 @@ data class ProfileRequest(
 
 	@field:SerializedName("view_type")
 	val viewType: String,
-
-	@field:SerializedName("auth_token")
-	val authToken: String,
 
 	@field:SerializedName("vendor_category")
 	val vendorCategory: String
