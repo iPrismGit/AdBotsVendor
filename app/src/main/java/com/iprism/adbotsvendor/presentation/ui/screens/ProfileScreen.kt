@@ -32,17 +32,44 @@ import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.Red
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.iprism.adbotsvendor.presentation.viewmodels.ProfileViewModel
+import com.iprism.adbotsvendor.utils.UiState
+
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(
+    navController: NavHostController,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
     val gradientColors = listOf(Color(0xFF273F87), Color(0xFFEEEEEE), Color(0xFFEEEEEE))
     var showLogoutDialog by remember { mutableStateOf(false) }
+
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val userName = remember(profileState) {
+        if (profileState is UiState.Success) {
+            (profileState as UiState.Success).data.response.name
+        } else {
+            "Loading..."
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchProfile()
+        viewModel.eventFlow.collect { event ->
+            if (event is ProfileViewModel.UiEvent.Logout) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true } }
+            }
+        }
+    }
 
     if (showLogoutDialog) {
         LogoutDialog(
             onDismiss = { showLogoutDialog = false },
             onConfirm = {
                 showLogoutDialog = false
-                // Handle logout logic here
+                viewModel.logout()
             }
         )
     }
@@ -69,7 +96,7 @@ fun ProfileScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "KV Ganesh",
+                text = userName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White
             )
