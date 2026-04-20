@@ -43,15 +43,14 @@ import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.viewmodels.ProfileViewModel
-import com.iprism.adbotsvendor.presentation.viewmodels.RegisterViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.ProfileDetailsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
 fun EditProfileScreen(
     onBack: () -> Unit,
     onNavigateToHome: () -> Unit,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileDetailsViewModel = hiltViewModel()
 ) {
 
     var yourName by rememberSaveable { mutableStateOf("") }
@@ -121,11 +120,11 @@ fun EditProfileScreen(
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                is ProfileViewModel.UiEvent.ShowToast -> {
+                is ProfileDetailsViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
-                ProfileViewModel.UiEvent.NavigateToHome -> {
+                ProfileDetailsViewModel.UiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
 

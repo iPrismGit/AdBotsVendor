@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class ProfileDetailsViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
