@@ -16,4 +16,5 @@ object Constants {
     const val PROMOTION_CALCULATION_ENDPOINT = "vendor_promotion_calculations"
     const val ADD_PROMOTION_ENDPOINT = "vendor_promotion_add"
     const val PROFILE_ENDPOINT = "vendor_profile_details"
+    const val CONTACTUS_ENDPOINT = "contact_us"
 }
