@@ -172,7 +172,8 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
                 }
             }
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 itemsIndexed(analytics) { index, promotion ->
                     if (index >= analytics.size - 1) {
