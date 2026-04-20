@@ -5,6 +5,7 @@ import com.iprism.adbotsvendor.data.models.LoginRequest
 import com.iprism.adbotsvendor.data.models.addpromotion.AddPromotionApiResponse
 import com.iprism.adbotsvendor.data.models.analytics.AnalyticsApiResponse
 import com.iprism.adbotsvendor.data.models.analytics.AnalyticsRequest
+import com.iprism.adbotsvendor.data.models.contactus.ContactUsApiResponse
 import com.iprism.adbotsvendor.data.models.contactus.ContactUsRequest
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesApiResponse
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesRequest
@@ -68,7 +69,7 @@ interface HealthDrinksService {
     suspend fun fetchProfile(@Body request : ProfileRequest) : ProfileApiResponse
 
     @POST(Constants.CONTACTUS_ENDPOINT)
-    suspend fun contactUs(@Body request : ContactUsRequest) : ContentPagesApiResponse
+    suspend fun contactUs(@Body request : ContactUsRequest) : ContactUsApiResponse
 
     @Multipart
     @POST(Constants.ADD_PROMOTION_ENDPOINT)
