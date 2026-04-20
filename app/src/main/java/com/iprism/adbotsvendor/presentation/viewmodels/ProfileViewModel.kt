@@ -7,8 +7,6 @@ import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
 import com.iprism.adbotsvendor.data.models.profile.ProfileApiResponse
 import com.iprism.adbotsvendor.data.models.profile.ProfileRequest
-import com.iprism.adbotsvendor.data.models.register.RegisterApiResponse
-import com.iprism.adbotsvendor.data.models.register.RegisterRequest
 import com.iprism.adbotsvendor.data.repositories.AuthRepository
 import com.iprism.adbotsvendor.utils.DataStoreManager
 import com.iprism.adbotsvendor.utils.UiState
@@ -38,6 +36,15 @@ class ProfileViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        fetchDropDowns()
+        fetchProfile()
+    }
+
+    fun fetchProfile() {
+        profile("", "", "", "", "", "view")
+    }
 
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
@@ -90,12 +97,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateProfile(
+    fun profile(
         area: String,
         city: String,
         businessName: String,
         name: String,
-        vendorCategory: String
+        vendorCategory: String,
+        viewType: String = "view"
     ) {
         viewModelScope.launch {
             try {
@@ -107,18 +115,22 @@ class ProfileViewModel @Inject constructor(
                     city = city,
                     name = name,
                     vendorCategory = vendorCategory,
-                    viewType = "view"
+                    viewType = viewType
                 )
                 _profileResponse.value = UiState.Loading
                 Log.d("requestLoading", request.toString())
                 val response = repository.profile(request)
                 if (response.status) {
                     _profileResponse.value = UiState.Success(response)
-                    _eventFlow.emit(UiEvent.NavigateToHome)
+                    if (viewType == "update") {
+                        _eventFlow.emit(UiEvent.ShowToast("Profile updated successfully"))
+                    }
                 } else {
+                    _profileResponse.value = UiState.Error(response.message)
                     _eventFlow.emit(UiEvent.ShowToast(response.message))
                 }
             } catch (e: Exception) {
+                _profileResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
                 _eventFlow.emit(UiEvent.ShowToast(e.localizedMessage ?: "Unknown error"))
             }
         }

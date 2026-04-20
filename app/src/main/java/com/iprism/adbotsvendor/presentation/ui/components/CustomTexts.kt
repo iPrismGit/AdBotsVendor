@@ -51,12 +51,14 @@ fun CustomTextField(
     value: String,
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit
 ) {
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
+        enabled = enabled,
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = { Text(placeholder, style = MaterialTheme.typography.bodySmall, color = Grey555)},
         keyboardOptions = KeyboardOptions(

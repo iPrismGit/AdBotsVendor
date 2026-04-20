@@ -70,10 +70,6 @@ fun EditProfileScreen(
     var categoryList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
     var areaList by remember { mutableStateOf<List<SpinnerItem>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchDropDowns()
-    }
-
     LaunchedEffect(dropDownsState) {
         if (dropDownsState is UiState.Success) {
             val data = (dropDownsState as UiState.Success).data.response
@@ -89,6 +85,39 @@ fun EditProfileScreen(
         }
     }
 
+    LaunchedEffect(registerState) {
+        if (registerState is UiState.Success) {
+            val profile = (registerState as UiState.Success).data.response
+            if (yourName.isEmpty()) yourName = profile.name
+            if (businessName.isEmpty()) businessName = profile.bussinessName
+            if (mobileNumber.isEmpty()) mobileNumber = profile.mobile
+        }
+    }
+
+    LaunchedEffect(dropDownsState, registerState, cityList, categoryList) {
+        if (dropDownsState is UiState.Success && registerState is UiState.Success && cityList.isNotEmpty()) {
+            val profile = (registerState as UiState.Success).data.response
+            
+            if (selectedCity == null) {
+                selectedCity = cityList.find { it.name.equals(profile.city, ignoreCase = true) }
+                selectedCity?.let { viewModel.fetchAreas(it.id.toString()) }
+            }
+            
+            if (selectedBusinessCat == null) {
+                selectedBusinessCat = categoryList.find { it.name.equals(profile.vendorCategory, ignoreCase = true) }
+            }
+        }
+    }
+
+    LaunchedEffect(areasState, registerState, areaList) {
+        if (areasState is UiState.Success && registerState is UiState.Success && areaList.isNotEmpty()) {
+            val profile = (registerState as UiState.Success).data.response
+            if (selectedArea == null) {
+                selectedArea = areaList.find { it.name.equals(profile.area, ignoreCase = true) }
+            }
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
@@ -96,7 +125,7 @@ fun EditProfileScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
-                RegisterViewModel.UiEvent.NavigateToHome -> {
+                ProfileViewModel.UiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
 
@@ -157,9 +186,10 @@ fun EditProfileScreen(
             TitleText(stringResource(R.string.mobile_number))
             Spacer(Modifier.height(12.dp))
             CustomTextField(
-                "",
+                mobileNumber,
                 stringResource(R.string.enter),
-                KeyboardType.Phone
+                KeyboardType.Phone,
+                enabled = false
             ) { mobileNumber = it }
 
             Spacer(Modifier.height(12.dp))
@@ -204,12 +234,13 @@ fun EditProfileScreen(
 
         Button(
             onClick = {
-                viewModel.updateProfile(
-                    area =  selectedArea?.name ?: "",
-                    city = selectedCity?.name ?: "",
+                viewModel.profile(
+                    area =  selectedArea?.id.toString() ?: "",
+                    city = selectedCity?.id.toString() ?: "",
                     businessName = businessName,
                     name = yourName,
-                    vendorCategory = selectedBusinessCat?.name ?: ""
+                    vendorCategory = selectedBusinessCat?.id.toString() ?: "",
+                    viewType = "update"
                 )
             },
             modifier = Modifier
@@ -228,7 +259,7 @@ fun EditProfileScreen(
                 )
             } else {
                 Text(
-                    "Continue",
+                    "Update",
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(8.dp)
                 )
