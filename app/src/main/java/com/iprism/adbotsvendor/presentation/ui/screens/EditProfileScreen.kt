@@ -99,12 +99,12 @@ fun EditProfileScreen(
             val profile = (registerState as UiState.Success).data.response
             
             if (selectedCity == null) {
-                selectedCity = cityList.find { it.name.equals(profile.city, ignoreCase = true) }
+                selectedCity = cityList.find { it.id.toString() == profile.city || it.name.equals(profile.city, ignoreCase = true) }
                 selectedCity?.let { viewModel.fetchAreas(it.id.toString()) }
             }
             
             if (selectedBusinessCat == null) {
-                selectedBusinessCat = categoryList.find { it.name.equals(profile.vendorCategory, ignoreCase = true) }
+                selectedBusinessCat = categoryList.find { it.id.toString() == profile.vendorCategory || it.name.equals(profile.vendorCategory, ignoreCase = true) }
             }
         }
     }
@@ -113,7 +113,7 @@ fun EditProfileScreen(
         if (areasState is UiState.Success && registerState is UiState.Success && areaList.isNotEmpty()) {
             val profile = (registerState as UiState.Success).data.response
             if (selectedArea == null) {
-                selectedArea = areaList.find { it.name.equals(profile.area, ignoreCase = true) }
+                selectedArea = areaList.find { it.id.toString() == profile.area || it.name.equals(profile.area, ignoreCase = true) }
             }
         }
     }
