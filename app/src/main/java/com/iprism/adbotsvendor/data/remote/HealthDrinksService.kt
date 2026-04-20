@@ -11,6 +11,8 @@ import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsApiResponse
 import com.iprism.adbotsvendor.data.models.dropdowns.DropDownsRequest
 import com.iprism.adbotsvendor.data.models.home.HomePageApiResponse
 import com.iprism.adbotsvendor.data.models.home.HomePageRequest
+import com.iprism.adbotsvendor.data.models.profile.ProfileApiResponse
+import com.iprism.adbotsvendor.data.models.profile.ProfileRequest
 import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalcilationApiResponse
 import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalculationRequest
 import com.iprism.adbotsvendor.data.models.promotiondetails.PromotionDetailsApiResponse
@@ -60,6 +62,9 @@ interface HealthDrinksService {
 
     @POST(Constants.PROMOTION_CALCULATION_ENDPOINT)
     suspend fun fetchPromotionCalculations(@Body request : PromotionCalculationRequest) : PromotionCalcilationApiResponse
+
+    @POST(Constants.PROFILE_ENDPOINT)
+    suspend fun fetchProfile(@Body request : ProfileRequest) : ProfileApiResponse
 
     @Multipart
     @POST(Constants.ADD_PROMOTION_ENDPOINT)
