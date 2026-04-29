@@ -3,6 +3,7 @@ package com.iprism.adbotsvendor.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
@@ -14,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.iprism.adbotsvendor.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsvendor.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.PromotionScreen
@@ -31,6 +33,9 @@ import com.iprism.adbotsvendor.presentation.ui.screens.ContentPageScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.EditProfileScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletHistoryScreen
 import com.iprism.adbotsvendor.presentation.ui.screens.WalletScreen
+import com.iprism.adbotsvendor.presentation.viewmodels.AnalyticsViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.HomeViewModel
+import com.iprism.adbotsvendor.presentation.viewmodels.ProfileViewModel
 
 @Composable
 fun AppNavHost(
@@ -39,11 +44,15 @@ fun AppNavHost(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val showBottomBar = currentRoute in listOf(
-        Screen.Home.route,
-        Screen.Analytics.route,
-        Screen.Profile.route
-    )
+    val showBottomBar by remember(currentRoute) {
+        derivedStateOf {
+            currentRoute in listOf(
+                Screen.Home.route,
+                Screen.Analytics.route,
+                Screen.Profile.route
+            )
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -58,7 +67,15 @@ fun AppNavHost(
             modifier = Modifier.padding(bottom = if (showBottomBar) innerPadding.calculateBottomPadding() else 0.dp)
         ) {
             composable(Screen.Splash.route) {
-                SplashScreen(navController)
+                SplashScreen({
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }, {
+                    navController.navigate("main") {   // 🔥 IMPORTANT
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                })
             }
             composable(Screen.Login.route) {
                 LoginScreen(onNavigateToOtp = { otp, mobile ->
@@ -78,29 +95,51 @@ fun AppNavHost(
                         navController.navigate(Screen.Register.createRoute(mobile))
                     },
                     onNavigateToHome = {
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate("main") {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     },
                 )
             }
-            composable(Screen.Home.route) {
-                HomeScreen({ navController.navigate(Screen.Wallet.route) },
-                    { navController.navigate(Screen.Notifications.route) },
-                    { navController.navigate(Screen.Analytics.route) },
-                    { navController.navigate(Screen.BusinessDetails.route) })
+            navigation(route = "main", startDestination = Screen.Home.route) {
+                composable(Screen.Home.route) { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("main")
+                    }
+                    val homeViewModel: HomeViewModel = hiltViewModel(parentEntry)
+                    HomeScreen(
+                        { navController.navigate(Screen.Wallet.route) },
+                        { navController.navigate(Screen.Notifications.route) },
+                        { navController.navigate(Screen.Analytics.route) },
+                        { navController.navigate(Screen.BusinessDetails.route) },
+                        homeViewModel = homeViewModel
+                    )
+                }
+
+                composable(Screen.Analytics.route) { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("main")
+                    }
+                    val viewModel: AnalyticsViewModel = hiltViewModel(parentEntry)
+                    AnalyticsScreen(
+                        { navController.navigate(Screen.Wallet.route) },
+                        { navController.navigate(Screen.Notifications.route) },
+                        { id -> navController.navigate(Screen.PromotionDetails.createRoute(id)) },
+                        viewModel = viewModel
+                    )
+                }
+
+                composable(Screen.Profile.route) { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("main")
+                    }
+                    val viewModel: ProfileViewModel = hiltViewModel(parentEntry)
+                    ProfileScreen(navController, viewModel)
+                }
             }
-            composable(Screen.Analytics.route) {
-                AnalyticsScreen(
-                    { navController.navigate(Screen.Wallet.route) },
-                    { navController.navigate(Screen.Notifications.route) },
-                    { id -> navController.navigate(Screen.PromotionDetails.createRoute(id)) })
-            }
+
             composable(Screen.PromotionDetails.route) {
                 PromotionDetailsScreen({ navController.popBackStack() })
-            }
-            composable(Screen.Profile.route) {
-                ProfileScreen(navController)
             }
             composable(Screen.Notifications.route) {
                 NotificationsScreen(navController)
@@ -144,7 +183,7 @@ fun AppNavHost(
                     mobile,
                     { navController.popBackStack() },
                     {
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate("main") {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     })
@@ -152,11 +191,7 @@ fun AppNavHost(
             composable(Screen.EditProfile.route) {
                 EditProfileScreen(
                     { navController.popBackStack() },
-                    {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
-                    })
+                )
             }
         }
     }

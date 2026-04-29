@@ -38,7 +38,7 @@ fun HomeScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
     onNavigateToPromotion: () -> Unit,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel
 ) {
 
     val scrollState = rememberScrollState()

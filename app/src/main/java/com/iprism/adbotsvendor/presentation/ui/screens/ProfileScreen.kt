@@ -40,7 +40,7 @@ import com.iprism.adbotsvendor.utils.UiState
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel
 ) {
     val gradientColors = listOf(Color(0xFF273F87), Color(0xFFEEEEEE), Color(0xFFEEEEEE))
     var showLogoutDialog by remember { mutableStateOf(false) }

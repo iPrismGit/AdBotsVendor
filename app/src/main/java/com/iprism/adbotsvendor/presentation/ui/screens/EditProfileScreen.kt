@@ -49,7 +49,6 @@ import com.iprism.adbotsvendor.utils.UiState
 @Composable
 fun EditProfileScreen(
     onBack: () -> Unit,
-    onNavigateToHome: () -> Unit,
     viewModel: ProfileDetailsViewModel = hiltViewModel()
 ) {
 
@@ -125,7 +124,6 @@ fun EditProfileScreen(
                 }
 
                 ProfileDetailsViewModel.UiEvent.NavigateToHome -> {
-                    onNavigateToHome()
                 }
 
                 else -> {}

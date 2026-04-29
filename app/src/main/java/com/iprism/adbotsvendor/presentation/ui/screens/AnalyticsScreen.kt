@@ -38,7 +38,7 @@ import com.iprism.adbotsvendor.presentation.viewmodels.AnalyticsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
 @Composable
-fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications : () -> Unit, onNavigateToPromotionDetails : (String) -> Unit, viewModel : AnalyticsViewModel = hiltViewModel()) {
+fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications : () -> Unit, onNavigateToPromotionDetails : (String) -> Unit, viewModel : AnalyticsViewModel) {
 
     val analytics by viewModel.analytics.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
