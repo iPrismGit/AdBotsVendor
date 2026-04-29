@@ -3,10 +3,13 @@ package com.iprism.adbotsvendor.presentation.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,17 @@ fun WalletHistoryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
 
+    val listState = rememberLazyListState()
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { lastIndex ->
+                // Trigger fetch when user is 1 item away from the end
+                if (lastIndex != null && lastIndex >= historyItems.size - 2) {
+                    viewModel.fetchWalletHistory()
+                }
+            }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -62,12 +76,13 @@ fun WalletHistoryScreen(
             )
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize()
             ) {
-                itemsIndexed(historyItems) { index, transaction ->
-                    if (index >= historyItems.size - 1) {
-                        viewModel.fetchWalletHistory()
-                    }
+                items(
+                    items = historyItems,
+                    key = { it.id } // Adding keys improves performance significantly
+                ) { transaction ->
                     TransactionItem(transaction)
                 }
 
