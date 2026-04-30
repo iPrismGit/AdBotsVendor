@@ -29,6 +29,7 @@ data class PromotionFormState(
     val categoryId: String = "",
     val categoryName: String = "",
     val videoUri: String? = null,
+    val videoLength: String = "0",
     val startDate: String = "",
     val days: String = "",
     val minutes: String = "",
@@ -76,8 +77,8 @@ class AddPromotionViewModel @Inject constructor(
     fun updateDays(days: String) = _formState.update { it.copy(days = days) }
     fun updateMinutes(minutes: String) = _formState.update { it.copy(minutes = minutes) }
 
-    fun updateVideoUri(uri: String?) {
-        _formState.update { it.copy(videoUri = uri) }
+    fun updateVideoUri(uri: String?, length: String = "0") {
+        _formState.update { it.copy(videoUri = uri, videoLength = length) }
     }
 
     fun validateBusinessDetails() {

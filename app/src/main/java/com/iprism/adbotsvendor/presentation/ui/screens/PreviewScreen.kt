@@ -317,7 +317,7 @@ fun PreviewScreen(
                     playTime = formState.minutes,
                     areasCount = 1,
                     noOfDays = formState.days,
-                    videoLength = "0" // Placeholder, can be updated if video length is required
+                    videoLength = formState.videoLength
                 )
             },
             enabled = isTermsAccepted && addPromotionState !is UiState.Loading,

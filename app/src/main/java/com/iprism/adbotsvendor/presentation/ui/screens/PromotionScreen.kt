@@ -3,6 +3,9 @@ package com.iprism.adbotsvendor.presentation.ui.screens
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -104,7 +107,10 @@ fun PromotionScreen(
     val videoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        uri?.let { viewModel.updateVideoUri(it.toString()) }
+        uri?.let {
+            val duration = getVideoDuration(context, it)
+            viewModel.updateVideoUri(it.toString(), duration)
+        }
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -458,6 +464,20 @@ fun VideoPreviewDialog(
                 }
             }
         }
+    }
+}
+
+fun getVideoDuration(context: android.content.Context, uri: Uri): String {
+    val retriever = MediaMetadataRetriever()
+    return try {
+        retriever.setDataSource(context, uri)
+        val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        val timeInMillis = time?.toLong() ?: 0L
+        (timeInMillis / 1000).toString() // Return duration in seconds
+    } catch (e: Exception) {
+        "0"
+    } finally {
+        retriever.release()
     }
 }
 
