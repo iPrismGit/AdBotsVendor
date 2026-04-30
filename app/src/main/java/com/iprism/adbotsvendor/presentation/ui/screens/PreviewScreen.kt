@@ -295,13 +295,10 @@ fun PreviewScreen(
                 val pDetails = (calculationState as? UiState.Success)?.data?.response?.paymentDetails
                 val currentWalletAmount = pDetails?.wallet?.toIntOrNull() ?: 0
                 val usedWalletAmount = if (isWalletUsed) currentWalletAmount else 0
-                val remainingAmountValue = totalAmount - usedWalletAmount
 
                 previewViewModel.submitPromotion(
                     context = context,
                     name = formState.name,
-                    businessName = "",
-                    mobile = "",
                     cityId = formState.cityId,
                     areaId = formState.areaId,
                     categoryId = formState.categoryId,
@@ -310,14 +307,17 @@ fun PreviewScreen(
                     screenCount = formState.screenCount,
                     totalAmount = totalAmount.toString(),
                     walletAmount = usedWalletAmount.toString(),
-                    remainingAmount = remainingAmountValue.toString(),
+                    grandTotal = (pDetails?.grandTotal ?: "0"),
                     sgst = (pDetails?.sGst ?: "0"),
                     cgst = (pDetails?.cGst ?: "0"),
+                    igst = (pDetails?.iGst ?: "0"),
                     videoUri = formState.videoUri?.let { Uri.parse(it) },
                     categoriesCount = 1,
                     transactionId = "0",
                     playTime = formState.minutes,
-                    areasCount = 1
+                    areasCount = 1,
+                    noOfDays = formState.days,
+                    videoLength = "0" // Placeholder, can be updated if video length is required
                 )
             },
             enabled = isTermsAccepted && addPromotionState !is UiState.Loading,

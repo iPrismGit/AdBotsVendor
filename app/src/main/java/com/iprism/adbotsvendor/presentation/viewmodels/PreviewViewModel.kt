@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -81,8 +80,6 @@ class PreviewViewModel @Inject constructor(
     fun submitPromotion(
         context: Context,
         name: String,
-        businessName: String,
-        mobile: String,
         cityId: String,
         areaId: String,
         categoryId: String,
@@ -91,14 +88,17 @@ class PreviewViewModel @Inject constructor(
         screenCount: Int,
         totalAmount: String,
         walletAmount: String,
-        remainingAmount: String,
+        grandTotal: String,
         sgst: String,
         cgst: String,
+        igst: String,
         videoUri: Uri?,
         categoriesCount: Int,
         transactionId: String,
         playTime : String,
-        areasCount : Int
+        areasCount : Int,
+        noOfDays: String,
+        videoLength: String
     ) {
         viewModelScope.launch {
             if (videoUri == null) {
@@ -121,54 +121,56 @@ class PreviewViewModel @Inject constructor(
                 val tokenBody = (user.token ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
                 val userIdBody = user.userId?.toRequestBody("text/plain".toMediaTypeOrNull()) ?: "".toRequestBody("text/plain".toMediaTypeOrNull())
                 val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
-                val businessNameBody = businessName.toRequestBody("text/plain".toMediaTypeOrNull())
-                val mobileBody = mobile.toRequestBody("text/plain".toMediaTypeOrNull())
                 val areasBody = areaId.toRequestBody("text/plain".toMediaTypeOrNull())
-                val areasCountBody = areasCount.toString().toRequestBody("text/plain".toMediaTypeOrNull()) // Assuming 1 for now
+                val areasCountBody = areasCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
                 val categoriesBody = categoryId.toRequestBody("text/plain".toMediaTypeOrNull())
+                val categoriesCountBody = categoriesCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                val cityBody = cityId.toRequestBody("text/plain".toMediaTypeOrNull())
                 val startDateBody = startDate.toRequestBody("text/plain".toMediaTypeOrNull())
                 val endDateBody = endDate.toRequestBody("text/plain".toMediaTypeOrNull())
                 val screensBody = screenCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
                 val totalAmountBody = totalAmount.toRequestBody("text/plain".toMediaTypeOrNull())
                 val walletAmountBody = walletAmount.toRequestBody("text/plain".toMediaTypeOrNull())
-                val remainingAmountBody = remainingAmount.toRequestBody("text/plain".toMediaTypeOrNull())
+                val grandTotalBody = grandTotal.toRequestBody("text/plain".toMediaTypeOrNull())
                 val sgstBody = sgst.toRequestBody("text/plain".toMediaTypeOrNull())
                 val cgstBody = cgst.toRequestBody("text/plain".toMediaTypeOrNull())
+                val igstBody = igst.toRequestBody("text/plain".toMediaTypeOrNull())
                 val playTimeBody = playTime.toRequestBody("text/plain".toMediaTypeOrNull())
                 val transactionIdBody = transactionId.toRequestBody("text/plain".toMediaTypeOrNull())
-                val cityBody = cityId.toRequestBody("text/plain".toMediaTypeOrNull())
-                val categoriesCountBody = categoriesCount.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                val noOfDaysBody = noOfDays.toRequestBody("text/plain".toMediaTypeOrNull())
+                val videoLengthBody = videoLength.toRequestBody("text/plain".toMediaTypeOrNull())
 
                 Log.d("AddPromotionRequest", """
                     userId: ${user.userId}
                     name: $name
-                    businessName: $businessName
-                    mobile: $mobile
                     areas: $areaId
                     areasCount: $areasCount
                     categories: $categoryId
+                    categoriesCount: $categoriesCount
+                    city: $cityId
                     startDate: $startDate
                     endDate: $endDate
                     screens: $screenCount
                     totalAmount: $totalAmount
                     walletAmount: $walletAmount
-                    remainingAmount: $remainingAmount
+                    grandTotal: $grandTotal
                     sgst: $sgst
                     cgst: $cgst
+                    igst: $igst
                     playTime: $playTime
                     transactionId: $transactionId
-                    city: $cityId
-                    categoriesCount: $categoriesCount
+                    noOfDays: $noOfDays
+                    videoLength: $videoLength
                     videoFile: ${videoFile.absolutePath}
                 """.trimIndent())
 
                 Log.d("AddPromotionRequest", "Auth Token: ${user.token}")
 
                 val response = repository.addPromotion(
-                    tokenBody, userIdBody, nameBody, businessNameBody, mobileBody, areasBody, areasCountBody,
-                    categoriesBody, startDateBody, endDateBody, screensBody, totalAmountBody,
-                    walletAmountBody, remainingAmountBody, sgstBody, cgstBody, playTimeBody,
-                    transactionIdBody, cityBody, categoriesCountBody, vendorVideoPart
+                    tokenBody, userIdBody, nameBody, areasBody, areasCountBody,
+                    categoriesBody, categoriesCountBody, cityBody, startDateBody, endDateBody, screensBody,
+                    totalAmountBody, walletAmountBody, grandTotalBody, sgstBody, cgstBody, igstBody,
+                    playTimeBody, transactionIdBody, noOfDaysBody, videoLengthBody, vendorVideoPart
                 )
 
                 if (response.status) {
@@ -176,8 +178,8 @@ class PreviewViewModel @Inject constructor(
                 } else {
                     _addPromotionResponse.value = UiState.Error(response.message)
                 }
-            } catch (e: Exception) {
-                _addPromotionResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            } catch (_: Exception) {
+                _addPromotionResponse.value = UiState.Error("Unknown error")
             }
         }
     }

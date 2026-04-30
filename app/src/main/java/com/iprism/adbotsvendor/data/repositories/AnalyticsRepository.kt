@@ -20,26 +20,27 @@ class AnalyticsRepository @Inject constructor(private val apiService : HealthDri
         token: RequestBody,
         userId: RequestBody,
         name: RequestBody,
-        businessName: RequestBody,
-        mobile: RequestBody,
         areas: RequestBody,
         areasCount: RequestBody,
         categories: RequestBody,
+        categoriesCount: RequestBody,
+        city: RequestBody,
         startDate: RequestBody,
         endDate: RequestBody,
         screens: RequestBody,
         totalAmount: RequestBody,
         walletAmount: RequestBody,
-        remainingAmount: RequestBody,
+        grandTotal: RequestBody,
         sgst: RequestBody,
         cgst: RequestBody,
+        igst: RequestBody,
         playTime: RequestBody,
         transactionId: RequestBody,
-        city: RequestBody,
-        categoriesCount: RequestBody,
+        noOfDays: RequestBody,
+        videoLength: RequestBody,
         vendorVideo: MultipartBody.Part
     ) = apiService.addPromotion(
-        token, userId, name, businessName, mobile, areas, areasCount, categories, startDate, endDate, screens,
-        totalAmount, walletAmount, remainingAmount, sgst, cgst, playTime, transactionId, city, categoriesCount, vendorVideo
+        token, userId, name, areas, areasCount, categories, categoriesCount, city, startDate, endDate, screens,
+        totalAmount, walletAmount, grandTotal, sgst, cgst, igst, playTime, transactionId, noOfDays, videoLength, vendorVideo
     )
 }
