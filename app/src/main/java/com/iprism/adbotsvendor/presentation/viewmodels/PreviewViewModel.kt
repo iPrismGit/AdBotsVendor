@@ -50,7 +50,7 @@ class PreviewViewModel @Inject constructor(
         }
     }
 
-    fun fetchCalculations(minutes: String, areas: String, categories: String) {
+    fun fetchCalculations(minutes: String, areas: String, categories: String, startDate: String, noOfScreens: String, city: String) {
         viewModelScope.launch {
             _response.value = UiState.Loading
             try {
@@ -60,7 +60,10 @@ class PreviewViewModel @Inject constructor(
                     minutes = minutes,
                     areas = areas,
                     categories = categories,
-                    authToken = user.token ?: ""
+                    authToken = user.token ?: "",
+                    startDate = startDate,
+                    noOfScreens = noOfScreens,
+                    city = city
                 )
                 Log.d("requestLoading", request.toString())
                 val response = repository.fetchPromotionCalculation(request)

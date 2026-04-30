@@ -17,16 +17,22 @@ data class PromotionCalcilationApiResponse(
 data class PaymentDetails(
 
 	@field:SerializedName("sgst")
-	val sgst: Int,
+	val sGst: String,
 
 	@field:SerializedName("wallet")
-	val wallet: Int,
+	val wallet: String,
 
 	@field:SerializedName("total_amount")
-	val totalAmount: Int,
+	val totalAmount: String,
 
 	@field:SerializedName("cgst")
-	val cgst: Int
+	val cGst: String,
+
+	@field:SerializedName("igst")
+	val iGst: String,
+
+	@field:SerializedName("grand_total")
+	val grandTotal: String
 )
 
 data class Response(

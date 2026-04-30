@@ -31,7 +31,6 @@ import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue2
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.ui.theme.White
 
@@ -73,12 +72,15 @@ fun PreviewScreen(
         }
     }
 
-    LaunchedEffect(formState.areaId, formState.categoryId, formState.minutes) {
-        if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty() && formState.minutes.isNotEmpty()) {
+    LaunchedEffect(formState.areaId, formState.categoryId, formState.minutes, formState.startDate, formState.screenCount, formState.cityId) {
+        if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty() && formState.minutes.isNotEmpty() && formState.startDate.isNotEmpty() && formState.cityId.isNotEmpty()) {
             previewViewModel.fetchCalculations(
                 minutes = formState.minutes,
                 areas = formState.areaId,
-                categories = formState.categoryId
+                categories = formState.categoryId,
+                startDate = formState.startDate,
+                noOfScreens = formState.screenCount.toString(),
+                city = formState.cityId
             )
         }
     }
@@ -110,8 +112,8 @@ fun PreviewScreen(
     }
 
     val paymentDetails = (calculationState as? UiState.Success<PromotionCalcilationApiResponse>)?.data?.response?.paymentDetails
-    val totalAmount = paymentDetails?.totalAmount ?: 0
-    val walletAmount = paymentDetails?.wallet ?: 0
+    val totalAmount = paymentDetails?.totalAmount?.toIntOrNull() ?: 0
+    val walletAmount = paymentDetails?.wallet?.toIntOrNull() ?: 0
 
     Column(
         modifier = Modifier
@@ -291,7 +293,7 @@ fun PreviewScreen(
         Button(
             onClick = {
                 val pDetails = (calculationState as? UiState.Success)?.data?.response?.paymentDetails
-                val currentWalletAmount = pDetails?.wallet ?: 0
+                val currentWalletAmount = pDetails?.wallet?.toIntOrNull() ?: 0
                 val usedWalletAmount = if (isWalletUsed) currentWalletAmount else 0
                 val remainingAmountValue = totalAmount - usedWalletAmount
 
@@ -309,8 +311,8 @@ fun PreviewScreen(
                     totalAmount = totalAmount.toString(),
                     walletAmount = usedWalletAmount.toString(),
                     remainingAmount = remainingAmountValue.toString(),
-                    sgst = (pDetails?.sgst ?: 0).toString(),
-                    cgst = (pDetails?.cgst ?: 0).toString(),
+                    sgst = (pDetails?.sGst ?: "0"),
+                    cgst = (pDetails?.cGst ?: "0"),
                     videoUri = formState.videoUri?.let { Uri.parse(it) },
                     categoriesCount = 1,
                     transactionId = "0",
@@ -343,7 +345,5 @@ fun PreviewScreen(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
-    } else if (calculationState is UiState.Error) {
-        // Show error message if needed
     }
 }

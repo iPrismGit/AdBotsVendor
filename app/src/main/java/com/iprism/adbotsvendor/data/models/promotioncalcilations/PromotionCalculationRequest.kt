@@ -17,5 +17,14 @@ data class PromotionCalculationRequest(
 	val categories: String,
 
 	@field:SerializedName("auth_token")
-	val authToken: String
+	val authToken: String,
+
+	@field:SerializedName("start_date")
+	val startDate: String,
+
+	@field:SerializedName("no_of_screens")
+	val noOfScreens: String,
+
+	@field:SerializedName("city")
+	val city: String
 )
