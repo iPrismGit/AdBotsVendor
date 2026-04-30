@@ -36,23 +36,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -101,11 +97,10 @@ fun PromotionScreen(
     val dropDownsState by viewModel.dropDownsResponse.collectAsStateWithLifecycle()
     val areasState by viewModel.areasResponse.collectAsStateWithLifecycle()
 
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var bottomSheetStep by remember { mutableIntStateOf(0) }
-    val sheetState = rememberModalBottomSheetState()
-
     var showVideoPreview by remember { mutableStateOf(false) }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
     val videoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -116,8 +111,6 @@ fun PromotionScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        // Even if permission is denied, we can still try to launch the picker 
-        // as it often works without it on many Android versions.
         videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
         if (!isGranted) {
             Toast.makeText(context, "Continuing with limited access", Toast.LENGTH_SHORT).show()
@@ -126,7 +119,7 @@ fun PromotionScreen(
 
     LaunchedEffect(viewModel) {
         viewModel.validationEvent.collectLatest { isValid ->
-            if (isValid) showBottomSheet = true
+            if (isValid) onContinueClick()
         }
     }
 
@@ -154,38 +147,40 @@ fun PromotionScreen(
         } ?: emptyList()
     }
 
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-                bottomSheetStep = 0
+    if (showStartDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        viewModel.setDates(dateFormatter.format(Date(it)), formState.endDate)
+                    }
+                    showStartDatePicker = false
+                }) { Text("OK") }
             },
-            sheetState = sheetState,
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .size(40.dp, 8.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(DarkBlue)
-                )
-            },
-            containerColor = Color.White
-        ) {
-            if (bottomSheetStep == 0) {
-                ChooseDatesContent(onContinue = { start, end ->
-                    viewModel.setDates(start, end)
-                    bottomSheetStep = 1
-                })
-            } else {
-                HowManyScreensContent(onContinue = { count ->
-                    viewModel.setScreenCount(count)
-                    showBottomSheet = false
-                    bottomSheetStep = 0
-                    onContinueClick()
-                })
+            dismissButton = {
+                TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
             }
-        }
+        ) { DatePicker(state = datePickerState) }
+    }
+
+    if (showEndDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        viewModel.setDates(formState.startDate, dateFormatter.format(Date(it)))
+                    }
+                    showEndDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
+            }
+        ) { DatePicker(state = datePickerState) }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -212,36 +207,16 @@ fun PromotionScreen(
                     .padding(12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Business Details", style = MaterialTheme.typography.headlineMedium)
+                Text("Promotion Details", style = MaterialTheme.typography.headlineMedium)
                 Spacer(Modifier.height(16.dp))
 
-                TitleText(stringResource(R.string.your_name))
+                TitleText("Ad Name")
                 Spacer(Modifier.height(12.dp))
                 CustomTextField(
                     formState.name,
                     stringResource(R.string.enter),
                     KeyboardType.Text,
                     onValueChange = viewModel::updateName
-                )
-
-                Spacer(Modifier.height(12.dp))
-                TitleText(stringResource(R.string.business_name))
-                Spacer(Modifier.height(12.dp))
-                CustomTextField(
-                    formState.businessName,
-                    stringResource(R.string.enter),
-                    KeyboardType.Text,
-                    onValueChange = viewModel::updateBusinessName
-                )
-
-                Spacer(Modifier.height(12.dp))
-                TitleText(stringResource(R.string.mobile_number))
-                Spacer(Modifier.height(12.dp))
-                CustomTextField(
-                    formState.mobile,
-                    stringResource(R.string.enter),
-                    KeyboardType.Phone,
-                    onValueChange = viewModel::updateMobile
                 )
 
                 Spacer(Modifier.height(12.dp))
@@ -273,6 +248,53 @@ fun PromotionScreen(
                     selectedItem = categories.find { it.id.toString() == formState.categoryId },
                     onItemSelected = { viewModel.updateCategory(it.id.toString(), it.name) }
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        TitleText("Start Date")
+                        Spacer(modifier = Modifier.height(12.dp))
+                        DateSelectorBox(
+                            text = if (formState.startDate.isEmpty()) "Choose" else formState.startDate,
+                            onClick = { showStartDatePicker = true }
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        TitleText("End Date")
+                        Spacer(modifier = Modifier.height(12.dp))
+                        DateSelectorBox(
+                            text = if (formState.endDate.isEmpty()) "Choose" else formState.endDate,
+                            onClick = { showEndDatePicker = true }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+                TitleText("How Many Screens")
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
+                        .background(White, RoundedCornerShape(12.dp))
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(String.format("%02d", formState.screenCount), fontFamily = MontserratFamily, color = BLACK, fontSize = 12.sp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        Text("-", fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { if (formState.screenCount > 1) viewModel.setScreenCount(formState.screenCount - 1) })
+                        Text(formState.screenCount.toString(), fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily, color = BLACK)
+                        Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { viewModel.setScreenCount(formState.screenCount + 1) })
+                    }
+                }
+
                 Spacer(Modifier.height(16.dp))
 
                 TitleText("Promotional Video")
@@ -288,7 +310,6 @@ fun PromotionScreen(
 
                         when {
                             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                // Modern Android: Photo Picker doesn't need permissions
                                 videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
                             }
                             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED -> {
@@ -444,134 +465,6 @@ fun VideoPreviewDialog(
                 }
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ChooseDatesContent(onContinue: (String, String) -> Unit) {
-    var startDate by remember { mutableStateOf<Long?>(null) }
-    var endDate by remember { mutableStateOf<Long?>(null) }
-    var showStartDatePicker by remember { mutableStateOf(false) }
-    var showEndDatePicker by remember { mutableStateOf(false) }
-    val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
-
-    if (showStartDatePicker) {
-        val datePickerState = rememberDatePickerState()
-        DatePickerDialog(
-            onDismissRequest = { showStartDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    startDate = datePickerState.selectedDateMillis
-                    showStartDatePicker = false
-                }) { Text("OK") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
-            }
-        ) { DatePicker(state = datePickerState) }
-    }
-
-    if (showEndDatePicker) {
-        val datePickerState = rememberDatePickerState()
-        DatePickerDialog(
-            onDismissRequest = { showEndDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    endDate = datePickerState.selectedDateMillis
-                    showEndDatePicker = false
-                }) { Text("OK") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
-            }
-        ) { DatePicker(state = datePickerState) }
-    }
-
-    Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-        Text("Choose Dates", style = MaterialTheme.typography.headlineSmall, color = Color.Black)
-        Spacer(modifier = Modifier.height(32.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("Start Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
-                Spacer(modifier = Modifier.height(12.dp))
-                DateSelectorBox(
-                    text = startDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
-                    onClick = { showStartDatePicker = true }
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text("End Date", style = MaterialTheme.typography.bodySmall, color = BLACK1)
-                Spacer(modifier = Modifier.height(12.dp))
-                DateSelectorBox(
-                    text = endDate?.let { dateFormatter.format(Date(it)) } ?: "Choose",
-                    onClick = { showEndDatePicker = true }
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(48.dp))
-        Button(
-            onClick = {
-                if (startDate != null && endDate != null) {
-                    onContinue(dateFormatter.format(Date(startDate!!)), dateFormatter.format(Date(endDate!!)))
-                }
-            },
-            enabled = startDate != null && endDate != null,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = DarkBlue,
-                disabledContainerColor = Color(0xFFEEEEEE),
-                contentColor = Color.White,
-                disabledContentColor = Color.LightGray
-            )
-        ) {
-            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun HowManyScreensContent(onContinue: (Int) -> Unit) {
-    var screenCount by remember { mutableIntStateOf(1) }
-    Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-        Text("How Many Screens", style = MaterialTheme.typography.headlineSmall, color = Color.Black)
-        Spacer(modifier = Modifier.height(32.dp))
-        Text("Select", style = MaterialTheme.typography.bodySmall, color = BLACK1)
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
-                .background(White, RoundedCornerShape(12.dp))
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(String.format("%02d", screenCount), fontFamily = MontserratFamily, color = BLACK, fontSize = 12.sp)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                Text("-", fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { if (screenCount > 1) screenCount-- })
-                Text(screenCount.toString(), fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily, color = BLACK)
-                Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { screenCount++ })
-            }
-        }
-        Spacer(modifier = Modifier.height(48.dp))
-        Button(
-            onClick = { onContinue(screenCount) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
-        ) {
-            Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

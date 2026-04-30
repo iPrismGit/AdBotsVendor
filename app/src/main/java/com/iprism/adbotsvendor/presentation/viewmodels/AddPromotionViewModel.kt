@@ -84,12 +84,12 @@ class AddPromotionViewModel @Inject constructor(
     fun validateBusinessDetails() {
         val state = _formState.value
         val error = when {
-            state.name.isBlank() -> "Please enter your name"
-            state.businessName.isBlank() -> "Please enter business name"
-            state.mobile.length != 10 -> "Please enter a valid 10-digit mobile number"
+            state.name.isBlank() -> "Please enter ad name"
             state.cityId.isBlank() -> "Please select a city"
             state.areaId.isBlank() -> "Please select an area"
             state.categoryId.isBlank() -> "Please select a business category"
+            state.startDate.isBlank() -> "Please select a start date"
+            state.endDate.isBlank() -> "Please select an end date"
             state.videoUri == null -> "Please select a promotional video"
             else -> null
         }
@@ -123,9 +123,7 @@ class AddPromotionViewModel @Inject constructor(
         val state = _formState.value
         Log.d("AddPromotion", """
             Form Data:
-            Your Name: ${state.name}
-            Business Name: ${state.businessName}
-            Mobile: ${state.mobile}
+            Ad Name: ${state.name}
             City: ${state.cityName} (ID: ${state.cityId})
             Area: ${state.areaName} (ID: ${state.areaId})
             Category: ${state.categoryName} (ID: ${state.categoryId})
