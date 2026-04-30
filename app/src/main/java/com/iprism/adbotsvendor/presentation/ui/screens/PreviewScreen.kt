@@ -73,10 +73,10 @@ fun PreviewScreen(
         }
     }
 
-    LaunchedEffect(formState.areaId, formState.categoryId) {
-        if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty()) {
+    LaunchedEffect(formState.areaId, formState.categoryId, formState.minutes) {
+        if (formState.areaId.isNotEmpty() && formState.categoryId.isNotEmpty() && formState.minutes.isNotEmpty()) {
             previewViewModel.fetchCalculations(
-                minutes = "1",
+                minutes = formState.minutes,
                 areas = formState.areaId,
                 categories = formState.categoryId
             )
@@ -165,6 +165,10 @@ fun PreviewScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Start Date : ${formState.startDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("No. of Days : ${formState.days}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("No. of Minutes : ${formState.minutes}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                 }
                 
                 Button(
@@ -294,13 +298,13 @@ fun PreviewScreen(
                 previewViewModel.submitPromotion(
                     context = context,
                     name = formState.name,
-                    businessName = formState.businessName,
-                    mobile = formState.mobile,
+                    businessName = "",
+                    mobile = "",
                     cityId = formState.cityId,
                     areaId = formState.areaId,
                     categoryId = formState.categoryId,
                     startDate = formState.startDate,
-                    endDate = formState.endDate,
+                    endDate = "",
                     screenCount = formState.screenCount,
                     totalAmount = totalAmount.toString(),
                     walletAmount = usedWalletAmount.toString(),
@@ -310,7 +314,7 @@ fun PreviewScreen(
                     videoUri = formState.videoUri?.let { Uri.parse(it) },
                     categoriesCount = 1,
                     transactionId = "0",
-                    playTime = "1",
+                    playTime = formState.minutes,
                     areasCount = 1
                 )
             },

@@ -22,8 +22,6 @@ import javax.inject.Inject
 
 data class PromotionFormState(
     val name: String = "",
-    val businessName: String = "",
-    val mobile: String = "",
     val cityId: String = "",
     val cityName: String = "",
     val areaId: String = "",
@@ -32,7 +30,8 @@ data class PromotionFormState(
     val categoryName: String = "",
     val videoUri: String? = null,
     val startDate: String = "",
-    val endDate: String = "",
+    val days: String = "",
+    val minutes: String = "",
     val screenCount: Int = 1
 )
 
@@ -66,8 +65,6 @@ class AddPromotionViewModel @Inject constructor(
     }
 
     fun updateName(name: String) = _formState.update { it.copy(name = name) }
-    fun updateBusinessName(businessName: String) = _formState.update { it.copy(businessName = businessName) }
-    fun updateMobile(mobile: String) = _formState.update { it.copy(mobile = mobile) }
     
     fun updateCity(id: String, name: String) {
         _formState.update { it.copy(cityId = id, cityName = name, areaId = "", areaName = "") }
@@ -76,6 +73,8 @@ class AddPromotionViewModel @Inject constructor(
     
     fun updateArea(id: String, name: String) = _formState.update { it.copy(areaId = id, areaName = name) }
     fun updateCategory(id: String, name: String) = _formState.update { it.copy(categoryId = id, categoryName = name) }
+    fun updateDays(days: String) = _formState.update { it.copy(days = days) }
+    fun updateMinutes(minutes: String) = _formState.update { it.copy(minutes = minutes) }
 
     fun updateVideoUri(uri: String?) {
         _formState.update { it.copy(videoUri = uri) }
@@ -89,6 +88,8 @@ class AddPromotionViewModel @Inject constructor(
             state.areaId.isBlank() -> "Please select an area"
             state.categoryId.isBlank() -> "Please select a business category"
             state.startDate.isBlank() -> "Please select a start date"
+            state.days.isBlank() -> "Please enter number of days"
+            state.minutes.isBlank() -> "Please enter number of minutes"
             state.videoUri == null -> "Please select a promotional video"
             else -> null
         }
@@ -127,7 +128,8 @@ class AddPromotionViewModel @Inject constructor(
             Area: ${state.areaName} (ID: ${state.areaId})
             Category: ${state.categoryName} (ID: ${state.categoryId})
             Start Date: ${state.startDate}
-            End Date: ${state.endDate}
+            No. of Days: ${state.days}
+            No. of Minutes: ${state.minutes}
             Screen Count: ${state.screenCount}
             Video: ${state.videoUri}
         """.trimIndent())

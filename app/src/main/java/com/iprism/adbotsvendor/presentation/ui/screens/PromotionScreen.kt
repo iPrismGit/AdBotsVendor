@@ -239,6 +239,33 @@ fun PromotionScreen(
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        TitleText("No. of Days")
+                        Spacer(modifier = Modifier.height(12.dp))
+                        CustomTextField(
+                            formState.days,
+                            "Enter Days",
+                            KeyboardType.Number,
+                            onValueChange = viewModel::updateDays
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        TitleText("No. of Minutes")
+                        Spacer(modifier = Modifier.height(12.dp))
+                        CustomTextField(
+                            formState.minutes,
+                            "Enter Minutes",
+                            KeyboardType.Number,
+                            onValueChange = viewModel::updateMinutes
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
                 TitleText("How Many Screens")
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
