@@ -89,7 +89,6 @@ class AddPromotionViewModel @Inject constructor(
             state.areaId.isBlank() -> "Please select an area"
             state.categoryId.isBlank() -> "Please select a business category"
             state.startDate.isBlank() -> "Please select a start date"
-            state.endDate.isBlank() -> "Please select an end date"
             state.videoUri == null -> "Please select a promotional video"
             else -> null
         }
@@ -107,8 +106,8 @@ class AddPromotionViewModel @Inject constructor(
         fetchDropDowns()
     }
 
-    fun setDates(start: String, end: String) {
-        _formState.update { it.copy(startDate = start, endDate = end) }
+    fun setDates(start: String) {
+        _formState.update { it.copy(startDate = start) }
     }
 
     fun setScreenCount(count: Int) {

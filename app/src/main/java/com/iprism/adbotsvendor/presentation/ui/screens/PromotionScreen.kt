@@ -99,7 +99,6 @@ fun PromotionScreen(
 
     var showVideoPreview by remember { mutableStateOf(false) }
     var showStartDatePicker by remember { mutableStateOf(false) }
-    var showEndDatePicker by remember { mutableStateOf(false) }
     val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
     val videoPickerLauncher = rememberLauncherForActivityResult(
@@ -154,31 +153,13 @@ fun PromotionScreen(
             confirmButton = {
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let {
-                        viewModel.setDates(dateFormatter.format(Date(it)), formState.endDate)
+                        viewModel.setDates(dateFormatter.format(Date(it)))
                     }
                     showStartDatePicker = false
                 }) { Text("OK") }
             },
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
-            }
-        ) { DatePicker(state = datePickerState) }
-    }
-
-    if (showEndDatePicker) {
-        val datePickerState = rememberDatePickerState()
-        DatePickerDialog(
-            onDismissRequest = { showEndDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        viewModel.setDates(formState.startDate, dateFormatter.format(Date(it)))
-                    }
-                    showEndDatePicker = false
-                }) { Text("OK") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
             }
         ) { DatePicker(state = datePickerState) }
     }
@@ -250,27 +231,12 @@ fun PromotionScreen(
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        TitleText("Start Date")
-                        Spacer(modifier = Modifier.height(12.dp))
-                        DateSelectorBox(
-                            text = if (formState.startDate.isEmpty()) "Choose" else formState.startDate,
-                            onClick = { showStartDatePicker = true }
-                        )
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        TitleText("End Date")
-                        Spacer(modifier = Modifier.height(12.dp))
-                        DateSelectorBox(
-                            text = if (formState.endDate.isEmpty()) "Choose" else formState.endDate,
-                            onClick = { showEndDatePicker = true }
-                        )
-                    }
-                }
+                TitleText("Start Date")
+                Spacer(modifier = Modifier.height(12.dp))
+                DateSelectorBox(
+                    text = if (formState.startDate.isEmpty()) "Choose" else formState.startDate,
+                    onClick = { showStartDatePicker = true }
+                )
 
                 Spacer(modifier = Modifier.height(12.dp))
                 TitleText("How Many Screens")

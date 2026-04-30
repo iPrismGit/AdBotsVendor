@@ -165,8 +165,6 @@ fun PreviewScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Start Date : ${formState.startDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("End Date : ${formState.endDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                 }
                 
                 Button(
@@ -250,40 +248,9 @@ fun PreviewScreen(
             Text("Contact Details", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
             
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Name", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+            Text("Ad Name", style = MaterialTheme.typography.bodySmall, color = BLACK1)
             Spacer(modifier = Modifier.height(8.dp))
             CustomTextField(formState.name, "", onValueChange = {})
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Mobile Number", style = MaterialTheme.typography.bodySmall, color = BLACK1)
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = "+91",
-                    onValueChange = {},
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    shape = RoundedCornerShape(8.dp),   // 🔥 rounded corners
-                    modifier = Modifier.width(70.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = LightGrey1,
-                        unfocusedBorderColor = LightGrey1,
-                        disabledBorderColor = LightGrey1
-                    )
-                )
-                OutlinedTextField(
-                    value = formState.mobile,
-                    onValueChange = {},
-                    readOnly = true,
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(1f),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = LightGrey1,
-                        unfocusedBorderColor = LightGrey1,
-                        disabledBorderColor = LightGrey1
-                    )
-                )
-            }
 
             Spacer(modifier = Modifier.height(30.dp))
             
