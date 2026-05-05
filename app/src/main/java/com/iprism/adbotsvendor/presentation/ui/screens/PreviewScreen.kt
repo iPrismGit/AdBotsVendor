@@ -174,7 +174,7 @@ fun PreviewScreen(
                 }
                 
                 Button(
-                    onClick = { /* Change Date */ },
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .height(32.dp),
