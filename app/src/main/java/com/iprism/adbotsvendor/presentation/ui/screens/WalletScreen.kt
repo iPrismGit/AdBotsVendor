@@ -92,7 +92,14 @@ fun WalletScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Column(
+        LaunchedEffect(state) {
+        if (state is UiState.Success) {
+            amount = ""
+            selectedAmount.intValue = 0
+        }
+    }
+
+    Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
@@ -106,7 +113,14 @@ fun WalletScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            Column(
+            LaunchedEffect(state) {
+        if (state is UiState.Success) {
+            amount = ""
+            selectedAmount.intValue = 0
+        }
+    }
+
+    Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -215,7 +229,11 @@ fun WalletScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
         Button(
-            onClick = { viewModel.wallet("12345", amount.toIntOrNull() ?: 0, "recharge_wallet") },
+            onClick = {
+                viewModel.wallet("12345", amount.toIntOrNull() ?: 0, "recharge_wallet")
+                amount = ""
+                selectedAmount.intValue = 0
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 12.dp)
