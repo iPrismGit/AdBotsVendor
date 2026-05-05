@@ -106,6 +106,30 @@ class ProfileDetailsViewModel @Inject constructor(
         viewType: String = "view"
     ) {
         viewModelScope.launch {
+            if (viewType == "update") {
+                when {
+                    name.isEmpty() -> {
+                        _eventFlow.emit(UiEvent.ShowToast("Please Enter Your Name"))
+                        return@launch
+                    }
+                    businessName.isEmpty() -> {
+                        _eventFlow.emit(UiEvent.ShowToast("Please Enter Business Name"))
+                        return@launch
+                    }
+                    city.isBlank() || city == "null" -> {
+                        _eventFlow.emit(UiEvent.ShowToast("Please Select City"))
+                        return@launch
+                    }
+                    area.isBlank() || area == "null" -> {
+                        _eventFlow.emit(UiEvent.ShowToast("Please Select Area"))
+                        return@launch
+                    }
+                    vendorCategory.isBlank() || vendorCategory == "null" -> {
+                        _eventFlow.emit(UiEvent.ShowToast("Please Select Business Category"))
+                        return@launch
+                    }
+                }
+            }
             try {
                 val user = dataStoreManager.userDetails.first()
                 val request = ProfileRequest(
