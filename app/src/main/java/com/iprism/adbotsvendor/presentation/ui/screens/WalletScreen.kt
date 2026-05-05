@@ -49,7 +49,16 @@ fun WalletScreen(
     var amount by rememberSaveable { mutableStateOf("") }
     val selectedAmount = rememberSaveable { mutableIntStateOf(0) }
     val state by viewModel.response.collectAsStateWithLifecycle()
+    var walletAmount by remember { mutableStateOf("0") }
     val context = LocalContext.current
+
+    LaunchedEffect(state) {
+        if (state is UiState.Success) {
+            walletAmount = (state as UiState.Success).data.response.wallet ?: "0"
+            amount = ""
+            selectedAmount.intValue = 0
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { message ->
@@ -92,14 +101,7 @@ fun WalletScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        LaunchedEffect(state) {
-        if (state is UiState.Success) {
-            amount = ""
-            selectedAmount.intValue = 0
-        }
-    }
-
-    Column(
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
@@ -113,21 +115,10 @@ fun WalletScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            LaunchedEffect(state) {
-        if (state is UiState.Success) {
-            amount = ""
-            selectedAmount.intValue = 0
-        }
-    }
-
-    Column(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val walletAmount = when (val currentState = state) {
-                    is UiState.Success -> currentState.data.response.wallet ?: 0
-                    else -> 0
-                }
                 Text(
                     text = "₹$walletAmount",
                     fontSize = 30.sp,
