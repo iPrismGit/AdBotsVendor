@@ -256,7 +256,7 @@ fun PromotionScreen(
                             formState.days,
                             "Enter Days",
                             KeyboardType.Number,
-                            onValueChange = viewModel::updateDays
+                            onValueChange = { if (it.length <= 5 && it.all { char -> char.isDigit() }) viewModel.updateDays(it) }
                         )
                     }
                     Column(modifier = Modifier.weight(1f)) {
@@ -266,7 +266,7 @@ fun PromotionScreen(
                             formState.minutes,
                             "Enter Minutes",
                             KeyboardType.Number,
-                            onValueChange = viewModel::updateMinutes
+                            onValueChange = { if (it.length <= 5 && it.all { char -> char.isDigit() }) viewModel.updateMinutes(it) }
                         )
                     }
                 }

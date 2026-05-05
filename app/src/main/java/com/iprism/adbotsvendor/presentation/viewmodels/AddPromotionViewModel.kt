@@ -85,12 +85,13 @@ class AddPromotionViewModel @Inject constructor(
         val state = _formState.value
         val error = when {
             state.name.isBlank() -> "Please enter ad name"
-            state.cityId.isBlank() -> "Please select a city"
-            state.areaId.isBlank() -> "Please select an area"
-            state.categoryId.isBlank() -> "Please select a business category"
+            state.cityId.isBlank() || state.cityId == "null" -> "Please select a city"
+            state.areaId.isBlank() || state.areaId == "null" -> "Please select an area"
+            state.categoryId.isBlank() || state.categoryId == "null" -> "Please select a business category"
             state.startDate.isBlank() -> "Please select a start date"
             state.days.isBlank() -> "Please enter number of days"
             state.minutes.isBlank() -> "Please enter number of minutes"
+            (state.days.toIntOrNull() == 0 && state.minutes.toIntOrNull() == 0) -> "Days and Minutes should not be 0"
             state.videoUri == null -> "Please select a promotional video"
             else -> null
         }
