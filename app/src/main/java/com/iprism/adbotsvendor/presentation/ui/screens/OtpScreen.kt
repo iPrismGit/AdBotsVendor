@@ -50,9 +50,13 @@ fun OtpScreen(
     val state by viewModel.loginResponse.collectAsStateWithLifecycle()
     val resendState by viewModel.resendOtpResponse.collectAsStateWithLifecycle()
 
+    var otpKey by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(resendState) {
         if (resendState is UiState.Success) {
             currentOtp = (resendState as UiState.Success).data.response.otp
+            enteredOtp = ""
+            otpKey++
         }
     }
 
@@ -147,8 +151,10 @@ fun OtpScreen(
                     color = Grey
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                OTPView(4) {
-                    enteredOtp = it
+                key(otpKey) {
+                    OTPView(4) {
+                        enteredOtp = it
+                    }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(
