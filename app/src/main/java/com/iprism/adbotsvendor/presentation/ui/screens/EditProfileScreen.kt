@@ -123,10 +123,10 @@ fun EditProfileScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
-                ProfileDetailsViewModel.UiEvent.NavigateToHome -> {
+                ProfileDetailsViewModel.UiEvent.NavigateToProfile -> {
+                    onBack()
+                    Toast.makeText(context, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
                 }
-
-                else -> {}
             }
         }
     }

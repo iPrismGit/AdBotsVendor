@@ -48,7 +48,7 @@ class ProfileDetailsViewModel @Inject constructor(
 
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
-        object NavigateToHome : UiEvent()
+        object NavigateToProfile : UiEvent()
     }
 
     fun fetchDropDowns() {
@@ -147,7 +147,7 @@ class ProfileDetailsViewModel @Inject constructor(
                 if (response.status) {
                     _profileResponse.value = UiState.Success(response)
                     if (viewType == "update") {
-                        _eventFlow.emit(UiEvent.ShowToast("Profile updated successfully"))
+                        _eventFlow.emit(UiEvent.NavigateToProfile)
                     }
                 } else {
                     _profileResponse.value = UiState.Error(response.message)
