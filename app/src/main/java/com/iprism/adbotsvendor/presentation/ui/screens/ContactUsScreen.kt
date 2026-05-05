@@ -113,6 +113,7 @@ fun ContactUsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .imePadding()
         ) {
             IconButton(
                 onClick = { onBack() },
@@ -183,8 +184,7 @@ fun ContactUsScreen(
                         viewModel.submitContactUs(name, emailId, mobileNumber, message)
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .imePadding(),
+                        .fillMaxWidth(),
                     enabled = uiState !is UiState.Loading,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Teal),
@@ -223,7 +223,6 @@ fun ContactUsScreen(
                         }
                     },
                     modifier = Modifier
-                        .imePadding()
                         .align(alignment = Alignment.CenterHorizontally),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Green),
