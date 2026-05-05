@@ -251,7 +251,7 @@ fun PreviewScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Contact Details", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
+            Text("Promotion Details", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
             
             Spacer(modifier = Modifier.height(16.dp))
             Text("Ad Name", style = MaterialTheme.typography.bodySmall, color = BLACK1)
