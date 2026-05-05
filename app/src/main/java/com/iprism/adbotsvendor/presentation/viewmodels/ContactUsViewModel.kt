@@ -1,5 +1,6 @@
 package com.iprism.adbotsvendor.presentation.viewmodels
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsvendor.data.models.contactus.ContactUsApiResponse
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,6 +79,11 @@ class ContactUsViewModel @Inject constructor(
             viewModelScope.launch { _eventFlow.emit(UiEvent.ShowToast("Please enter a valid 10-digit mobile number")) }
             return
         }
+        if (Pattern.matches("[0-5].*", mobile)) {
+            viewModelScope.launch { _eventFlow.emit(UiEvent.ShowToast("Please Enter Valid Mobile Number!")) }
+            return
+        }
+
         if (message.isBlank()) {
             viewModelScope.launch { _eventFlow.emit(UiEvent.ShowToast("Please enter your message")) }
             return

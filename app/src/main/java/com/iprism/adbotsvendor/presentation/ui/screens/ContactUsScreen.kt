@@ -161,7 +161,11 @@ fun ContactUsScreen(
                     mobileNumber,
                     stringResource(R.string.enter),
                     KeyboardType.Phone
-                ) { mobileNumber = it }
+                ) {
+                    if (it.length <= 10 && it.all { char -> char.isDigit() }) {
+                        mobileNumber = it
+                    }
+                }
 
                 Spacer(Modifier.height(12.dp))
                 TitleText("Message")
@@ -186,7 +190,10 @@ fun ContactUsScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Teal),
                 ) {
                     if (uiState is UiState.Loading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White
+                        )
                     } else {
                         Text(
                             "Confirm",
