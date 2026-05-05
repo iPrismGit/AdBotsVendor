@@ -52,6 +52,7 @@ fun CustomTextField(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     onValueChange: (String) -> Unit
 ) {
 
@@ -59,6 +60,7 @@ fun CustomTextField(
         value = value,
         onValueChange = onValueChange,
         enabled = enabled,
+        readOnly = readOnly,
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = { Text(placeholder, style = MaterialTheme.typography.bodySmall, color = Grey555)},
         keyboardOptions = KeyboardOptions(
@@ -67,7 +69,11 @@ fun CustomTextField(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = LightGrey
+            unfocusedBorderColor = LightGrey,
+            disabledTextColor = BLACK,
+            disabledBorderColor = LightGrey,
+            disabledPlaceholderColor = Grey555,
+            disabledContainerColor = Color.Transparent
         )
     )
 }

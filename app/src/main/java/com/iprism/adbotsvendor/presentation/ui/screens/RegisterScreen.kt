@@ -57,7 +57,6 @@ fun RegisterScreen(
 
     var yourName by rememberSaveable { mutableStateOf("") }
     var businessName by rememberSaveable { mutableStateOf("") }
-    var mobileNumber by rememberSaveable { mutableStateOf("") }
     var selectedCity by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
     var selectedArea by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
     var selectedBusinessCat by rememberSaveable { mutableStateOf<SpinnerItem?>(null) }
@@ -156,10 +155,12 @@ fun RegisterScreen(
             TitleText(stringResource(R.string.mobile_number))
             Spacer(Modifier.height(12.dp))
             CustomTextField(
-                mobile,
-                stringResource(R.string.enter),
-                KeyboardType.Phone
-            ) { mobileNumber = it }
+                value = mobile,
+                placeholder = stringResource(R.string.enter),
+                keyboardType = KeyboardType.Phone,
+                enabled = false,
+                onValueChange = {}
+            )
 
             Spacer(Modifier.height(12.dp))
 
