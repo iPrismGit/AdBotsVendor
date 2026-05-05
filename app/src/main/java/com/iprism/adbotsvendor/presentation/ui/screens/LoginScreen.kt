@@ -29,6 +29,7 @@ import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
 import com.iprism.adbotsvendor.utils.UiState
 import kotlinx.coroutines.flow.collectLatest
+import java.util.regex.Pattern
 
 @Composable
 fun LoginScreen(
@@ -153,7 +154,13 @@ fun LoginScreen(
 
                 Button(
                     onClick = {
-                        if (mobileNumber.length == 10) {
+                        if (mobileNumber.isEmpty()){
+                            Toast.makeText(context, "Please Enter Mobile Number!", Toast.LENGTH_SHORT).show()
+                        } else if (mobileNumber.length != 10){
+                            Toast.makeText(context, "Please Enter Valid Mobile Number!", Toast.LENGTH_SHORT).show()
+                        }  else if (Pattern.matches("[0-5].*", mobileNumber)) {
+                            Toast.makeText(context, "Please Enter Valid Mobile Number!", Toast.LENGTH_SHORT).show()
+                        } else {
                             val request = LoginRequest(
                                 playerId = "",
                                 appVersion = "1.0",
@@ -162,8 +169,6 @@ fun LoginScreen(
                                 token = "token"
                             )
                             viewModel.login(request)
-                        } else {
-                            Toast.makeText(context, "Please enter 10 digit mobile number", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier
