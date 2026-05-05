@@ -204,11 +204,11 @@ fun RegisterScreen(
         Button(
             onClick = {
                 viewModel.registerUser(
-                    area =  selectedArea?.id.toString() ?: "",
-                    city = selectedCity?.id.toString() ?: "",
+                    area =  selectedArea?.id?.toString() ?: "",
+                    city = selectedCity?.id?.toString() ?: "",
                     businessName = businessName,
                     name = yourName,
-                    vendorCategory = selectedBusinessCat?.id.toString() ?: ""
+                    vendorCategory = selectedBusinessCat?.id?.toString() ?: ""
                 )
             },
             modifier = Modifier

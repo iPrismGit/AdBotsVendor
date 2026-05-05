@@ -105,15 +105,15 @@ class RegisterViewModel @Inject constructor(
                     _eventFlow.emit(UiEvent.ShowToast("Please Enter Business Name"))
                     return@launch
                 }
-                area.isEmpty() -> {
-                    _eventFlow.emit(UiEvent.ShowToast("Please Select Area"))
-                    return@launch
-                }
-                city.isEmpty() -> {
+                city.isNullOrBlank() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Select City"))
                     return@launch
                 }
-                vendorCategory.isEmpty() -> {
+                area.isNullOrBlank() -> {
+                    _eventFlow.emit(UiEvent.ShowToast("Please Select Area"))
+                    return@launch
+                }
+                vendorCategory.isNullOrBlank() -> {
                     _eventFlow.emit(UiEvent.ShowToast("Please Select Business Category"))
                     return@launch
                 }
