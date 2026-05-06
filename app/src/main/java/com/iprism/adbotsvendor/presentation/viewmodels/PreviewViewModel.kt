@@ -11,14 +11,17 @@ import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalcil
 import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalculationRequest
 import com.iprism.adbotsvendor.data.repositories.AnalyticsRepository
 import com.iprism.adbotsvendor.utils.DataStoreManager
+import com.iprism.adbotsvendor.utils.ProgressRequestBody
 import com.iprism.adbotsvendor.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -37,6 +40,9 @@ class PreviewViewModel @Inject constructor(
 
     private val _addPromotionResponse = MutableStateFlow<UiState<AddPromotionApiResponse>>(UiState.Idle)
     val addPromotionResponse: StateFlow<UiState<AddPromotionApiResponse>> = _addPromotionResponse
+
+    private val _uploadProgress = MutableStateFlow(0)
+    val uploadProgress: StateFlow<Int> = _uploadProgress
 
     private val _toastMessage = MutableSharedFlow<String>()
     val toastMessage = _toastMessage.asSharedFlow()
@@ -107,6 +113,7 @@ class PreviewViewModel @Inject constructor(
             }
 
             _addPromotionResponse.value = UiState.Loading
+            _uploadProgress.value = 0
             try {
                 val user = getUser()
                 val videoFile = getFileFromUri(context, videoUri)
@@ -116,7 +123,10 @@ class PreviewViewModel @Inject constructor(
                 }
 
                 val requestFile = videoFile.asRequestBody("video/mp4".toMediaTypeOrNull())
-                val vendorVideoPart = MultipartBody.Part.createFormData("vendor_video", videoFile.name, requestFile)
+                val progressRequestBody = ProgressRequestBody(requestFile) { progress ->
+                    _uploadProgress.value = progress
+                }
+                val vendorVideoPart = MultipartBody.Part.createFormData("vendor_video", videoFile.name, progressRequestBody)
 
                 val tokenBody = (user.token ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
                 val userIdBody = user.userId?.toRequestBody("text/plain".toMediaTypeOrNull()) ?: "".toRequestBody("text/plain".toMediaTypeOrNull())
@@ -178,14 +188,14 @@ class PreviewViewModel @Inject constructor(
                 } else {
                     _addPromotionResponse.value = UiState.Error(response.message)
                 }
-            } catch (_: Exception) {
-                _addPromotionResponse.value = UiState.Error("Unknown error")
+            } catch (e: Exception) {
+                _addPromotionResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    private fun getFileFromUri(context: Context, uri: Uri): File? {
-        return try {
+    private suspend fun getFileFromUri(context: Context, uri: Uri): File? = withContext(Dispatchers.IO) {
+        try {
             val contentResolver = context.contentResolver
             val fileName = getFileName(context, uri) ?: "temp_video"
             val file = File(context.cacheDir, fileName)

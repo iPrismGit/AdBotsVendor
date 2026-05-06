@@ -44,6 +44,7 @@ fun PreviewScreen(
     val formState by viewModel.formState.collectAsStateWithLifecycle()
     val calculationState by previewViewModel.response.collectAsStateWithLifecycle()
     val addPromotionState by previewViewModel.addPromotionResponse.collectAsStateWithLifecycle()
+    val uploadProgress by previewViewModel.uploadProgress.collectAsStateWithLifecycle()
     
     var isWalletUsed by remember { mutableStateOf(false) }
     var isTermsAccepted by remember { mutableStateOf(false) }
@@ -326,11 +327,19 @@ fun PreviewScreen(
             )
         ) {
             if (addPromotionState is UiState.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    strokeWidth = 2.dp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = if (uploadProgress > 0) "Uploading $uploadProgress%" else "Processing...",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             } else {
                 Text("Continue", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.padding(8.dp))
             }
