@@ -63,7 +63,7 @@ class WalletViewModel @Inject constructor(private val repository: WalletReposito
     private fun validateAmount(amount: Int): String? {
         if (amount <= 0) return "Amount must be greater than 0"
         if (amount < 10) return "Minimum recharge is ₹10"
-        if (amount > 10000) return "Maximum limit is ₹10000"
+        if (amount > 100000) return "Maximum limit is ₹10000"
         return null
     }
 }

@@ -135,9 +135,25 @@ fun WalletScreen(
 
             OutlinedTextField(
                 value = amount,
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() }) {
-                        amount = it
+                onValueChange = { input ->
+                    if (input.all { it.isDigit() }) {
+                        if (input.isEmpty()) {
+                            amount = ""
+                            selectedAmount.intValue = 0
+                        } else {
+                            val amountInt = input.toIntOrNull() ?: 0
+                            // 7 digit fixed limit and max amount 100,000
+                            if (input.length <= 7 && amountInt <= 100000) {
+                                amount = input
+                                // Deselect options if the typed amount doesn't match
+                                val options = listOf(100, 1000, 2000)
+                                selectedAmount.intValue = if (amountInt in options && input == amountInt.toString()) {
+                                    amountInt
+                                } else {
+                                    0
+                                }
+                            }
+                        }
                     }
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
