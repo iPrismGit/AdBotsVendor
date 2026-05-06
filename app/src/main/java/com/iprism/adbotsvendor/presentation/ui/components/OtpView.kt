@@ -3,6 +3,7 @@ package com.iprism.adbotsvendor.presentation.ui.components
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -34,24 +35,6 @@ fun OTPView(
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        // Hidden BasicTextField to handle input
-        BasicTextField(
-            value = otpValue,
-            onValueChange = {
-                if (it.length <= otpLength && it.all { char -> char.isDigit() }) {
-                    otpValue = it
-                    onOtpComplete(it)
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .fillMaxWidth()
-                .height(60.dp), // Cover the visual area to capture clicks
-            textStyle = TextStyle(color = Color.Transparent),
-            cursorBrush = androidx.compose.ui.graphics.SolidColor(Color.Transparent) // Hide native cursor
-        )
-
         // Visible Row of OTP boxes
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -62,8 +45,13 @@ fun OTPView(
                     index < otpValue.length -> otpValue[index].toString()
                     else -> ""
                 }
-                
-                val isFocused = otpValue.length == index
+
+                // If full, show cursor in the last box
+                val isFocused = if (otpValue.length == otpLength) {
+                    index == otpLength - 1
+                } else {
+                    otpValue.length == index
+                }
 
                 Box(
                     modifier = Modifier
@@ -73,20 +61,26 @@ fun OTPView(
                             width = 1.2.dp,
                             color = if (isFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                             shape = RoundedCornerShape(8.dp)
-                        ),
+                        )
+                        .clickable { focusRequester.requestFocus() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = char,
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurface
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = char,
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         )
-                    )
-                    
-                    if (isFocused) {
-                        BlinkingCursor()
+
+                        if (isFocused) {
+                            BlinkingCursor()
+                        }
                     }
                 }
             }
