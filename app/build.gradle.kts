@@ -23,7 +23,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -56,7 +57,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.hilt.android)
-    implementation(libs.androidx.benchmark.common)
+    androidTestImplementation(libs.androidx.benchmark.common)
     ksp(libs.hilt.compiler)
 
     // Retrofit
