@@ -233,7 +233,6 @@ fun WalletScreen(
             Text(
                 text = "Continue",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(8.dp)
             )
         }

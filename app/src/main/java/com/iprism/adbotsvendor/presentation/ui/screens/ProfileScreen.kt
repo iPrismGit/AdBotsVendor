@@ -180,10 +180,7 @@ fun ProfileScreen(
                 .padding(bottom = 30.dp)
                 .border(0.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.error
-            )
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Red)
         ) {
             Text(
                 text = "Logout",
