@@ -17,11 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey2
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 
 @Composable
@@ -30,7 +25,7 @@ fun NotificationsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         IconButton(
@@ -40,7 +35,7 @@ fun NotificationsScreen(navController: NavHostController) {
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = BLACK,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -48,7 +43,7 @@ fun NotificationsScreen(navController: NavHostController) {
         Text(
             text = "Notifications",
             style = MaterialTheme.typography.headlineSmall,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(12.dp)
         )
 
@@ -80,7 +75,7 @@ fun NotificationsScreen(navController: NavHostController) {
 
             items(dummyNotifications) { notification ->
                 NotificationItem(notification)
-                HorizontalDivider(thickness = 1.dp, color = LightGrey1)
+                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
             }
         }
     }
@@ -102,21 +97,21 @@ fun NotificationItem(notification: NotificationData) {
                 fontSize = 14.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.SemiBold,
-                color = BLACK1
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = notification.time,
                 fontSize = 12.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
-                color = LightGrey2
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = notification.body,
             fontSize = 14.sp,
-            color = LightGrey2,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Normal,
         )

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,9 +51,6 @@ import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.Green
-import com.iprism.adbotsvendor.presentation.ui.theme.Teal
 import com.iprism.adbotsvendor.presentation.viewmodels.ContactUsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -108,7 +106,7 @@ fun ContactUsScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -122,7 +120,7 @@ fun ContactUsScreen(
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
-                    tint = BLACK,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -133,7 +131,11 @@ fun ContactUsScreen(
                     .padding(12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Contact us", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    "Contact us",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(Modifier.height(16.dp))
                 TitleText(stringResource(R.string.your_name))
                 Spacer(Modifier.height(12.dp))
@@ -187,17 +189,18 @@ fun ContactUsScreen(
                         .fillMaxWidth(),
                     enabled = uiState !is UiState.Loading,
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Teal),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 ) {
                     if (uiState is UiState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
                         Text(
                             "Confirm",
                             style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(8.dp)
                         )
                     }
@@ -206,6 +209,7 @@ fun ContactUsScreen(
                 Text(
                     "Or",
                     style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -225,12 +229,13 @@ fun ContactUsScreen(
                     modifier = Modifier
                         .align(alignment = Alignment.CenterHorizontally),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Green),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2ECC71)),
                 ) {
                     Text(
                         "Call",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
                         modifier = Modifier.padding(8.dp)
                     )
                 }

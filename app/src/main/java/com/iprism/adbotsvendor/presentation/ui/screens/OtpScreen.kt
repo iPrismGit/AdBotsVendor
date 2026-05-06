@@ -25,10 +25,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.LoginRequest
 import com.iprism.adbotsvendor.presentation.ui.components.OTPView
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.Green
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey
-import com.iprism.adbotsvendor.presentation.ui.theme.LightBlack
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.viewmodels.OtpViewModel
 import com.iprism.adbotsvendor.utils.UiState
@@ -97,7 +93,7 @@ fun OtpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         IconButton(
@@ -107,7 +103,7 @@ fun OtpScreen(
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -129,10 +125,10 @@ fun OtpScreen(
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 .border(
                     1.dp,
-                    Color(0xFFF5F5F5),
+                    MaterialTheme.colorScheme.outlineVariant,
                     RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
                 ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.surface
         ) {
             Column(
                 modifier = Modifier
@@ -142,13 +138,13 @@ fun OtpScreen(
                 Text(
                     text = "Enter your code",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "+91 $mobile",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Grey
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 key(otpKey) {
@@ -166,11 +162,11 @@ fun OtpScreen(
                         Text(
                             text = "Didn't receive the code? ",
                             style = MaterialTheme.typography.bodySmall,
-                            color = LightBlack
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "Resend",
-                            color = if (isResendEnabled) Green else Color.Gray,
+                            color = if (isResendEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
@@ -183,7 +179,7 @@ fun OtpScreen(
                     Text(
                         text = timerText,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LightBlack
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -209,19 +205,19 @@ fun OtpScreen(
                         .imePadding(),
                     shape = RoundedCornerShape(12.dp),
                     enabled = state !is UiState.Loading && resendState !is UiState.Loading,
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     if (state is UiState.Loading || resendState is UiState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             strokeWidth = 2.dp
                         )
                     } else {
                         Text(
                             text = "Continue",
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(8.dp),
                         )
                     }

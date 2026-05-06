@@ -14,8 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.navigation.Screen
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
@@ -24,7 +22,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
 
@@ -57,7 +55,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Icon(
                         painter = painterResource(id = icon),
                         contentDescription = label,
-                        tint = if (isSelected) DarkBlue else LightGrey1,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(24.dp)
                     )
                 },
@@ -66,7 +64,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Text(
                         text = label,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (isSelected) DarkBlue else LightGrey1
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
 

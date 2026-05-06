@@ -9,13 +9,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 
 @Composable
 fun TopBar(
@@ -25,7 +24,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(DarkBlue).padding(top = 4.dp, bottom = 4.dp),
+            .background(MaterialTheme.colorScheme.primary).padding(top = 4.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.Start
     )
     {
@@ -33,9 +32,9 @@ fun TopBar(
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
-        Text(text = title, modifier = Modifier.fillMaxWidth().align(Alignment.CenterVertically), color = Color.White)
+        Text(text = title, modifier = Modifier.fillMaxWidth().align(Alignment.CenterVertically), color = MaterialTheme.colorScheme.onPrimary)
     }
 }

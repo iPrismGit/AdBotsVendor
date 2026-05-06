@@ -47,13 +47,13 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .background(DarkBlue)
+                .background(MaterialTheme.colorScheme.primary)
                 .padding(12.dp)
         ) {
             Row(
@@ -107,7 +107,7 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "Hyderabad",
-                            color = White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -115,12 +115,12 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Text(
                         text = "Road No 4, Banjara Hills...",
-                        color = White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontFamily = MontserratFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp
@@ -151,7 +151,7 @@ fun AnalyticsScreen(onNavigateToWallet : () -> Unit, onNavigateToNotifications :
             Text(
                 text = "Your Promotions",
                 style = MaterialTheme.typography.headlineSmall,
-                color = DarkRed
+                color = MaterialTheme.colorScheme.error
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -265,12 +265,12 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit, promotionsItem: Promo
                 .height(32.dp),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkRed)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
             Text(
                 text = "View Analytics",
                 fontSize = 12.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onError,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Medium
             )
@@ -280,6 +280,8 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit, promotionsItem: Promo
 
 @Composable
 fun GradientDivider() {
+    val themeColor = MaterialTheme.colorScheme.onPrimary
+    val errorColor = MaterialTheme.colorScheme.error
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -287,9 +289,9 @@ fun GradientDivider() {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        White,
-                        DarkRed,
-                        White
+                        themeColor.copy(alpha = 0.1f),
+                        errorColor,
+                        themeColor.copy(alpha = 0.1f)
                     )
                 )
             )

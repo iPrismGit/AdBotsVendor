@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey
 
 @Composable
 fun OTPView(
@@ -72,7 +71,7 @@ fun OTPView(
                         .height(60.dp)
                         .border(
                             width = 1.2.dp,
-                            color = if (isFocused) MaterialTheme.colorScheme.primary else Grey,
+                            color = if (isFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                             shape = RoundedCornerShape(8.dp)
                         ),
                     contentAlignment = Alignment.Center
@@ -82,7 +81,7 @@ fun OTPView(
                         style = TextStyle(
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     )
                     

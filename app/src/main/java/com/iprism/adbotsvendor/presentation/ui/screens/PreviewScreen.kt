@@ -27,15 +27,10 @@ import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.promotioncalcilations.PromotionCalcilationApiResponse
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue2
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsvendor.presentation.ui.theme.White
-
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue2
 import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
 import com.iprism.adbotsvendor.presentation.viewmodels.PreviewViewModel
 import com.iprism.adbotsvendor.utils.UiState
@@ -118,7 +113,7 @@ fun PreviewScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         // Back Button
@@ -129,6 +124,7 @@ fun PreviewScreen(
             Icon(
                 painter = painterResource(id = R.drawable.back_img),
                 contentDescription = "Back",
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -143,7 +139,7 @@ fun PreviewScreen(
             Text(
                 text = "Preview",
                 style = MaterialTheme.typography.headlineSmall,
-                color = BLACK
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -153,7 +149,7 @@ fun PreviewScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Brush.horizontalGradient(listOf(Color(0xFF015DC5), Color(0xFF357ABD))))
+                    .background(Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))))
                     .padding(16.dp)
             ) {
                 Column {
@@ -162,15 +158,15 @@ fun PreviewScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Charges", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
-                        Text("₹$totalAmount", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
+                        Text("Charges", color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
+                        Text("₹$totalAmount", color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Start Date : ${formState.startDate}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Text("Start Date : ${formState.startDate}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("No. of Days : ${formState.days}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Text("No. of Days : ${formState.days}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("No. of Minutes : ${formState.minutes}", color = White, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
+                    Text("No. of Minutes : ${formState.minutes}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 12.sp, fontFamily = MontserratFamily, fontWeight = FontWeight.Light)
                 }
                 
                 Button(
@@ -180,22 +176,22 @@ fun PreviewScreen(
                         .height(32.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                     shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF3B30))
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text("Change Date", fontSize = 10.sp, fontWeight = FontWeight.Medium, fontFamily = MontserratFamily, color = White)
+                    Text("Change Date", fontSize = 10.sp, fontWeight = FontWeight.Medium, fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onError)
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Promotional Video", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = BLACK, fontFamily = MontserratFamily)
+            Text("Promotional Video", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontFamily = MontserratFamily)
             Spacer(modifier = Modifier.height(12.dp))
 
             // File Selector Placeholder
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(8.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -205,10 +201,10 @@ fun PreviewScreen(
                     modifier = Modifier.size(32.dp),
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(fileName, modifier = Modifier.weight(1f), fontSize = 12.sp, color = BLACK1, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
+                Text(fileName, modifier = Modifier.weight(1f), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
                 Text(
                     "Preview",
-                    color = LightBlue2,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = MontserratFamily,
@@ -222,8 +218,8 @@ fun PreviewScreen(
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEEEEEE)),
-                color = Color.White
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
@@ -236,11 +232,11 @@ fun PreviewScreen(
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Wallet Amount", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
+                        Text("Wallet Amount", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onSurface)
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("Use Wallet Funds", fontSize = 10.sp, color = BLACK, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
+                        Text("Use Wallet Funds", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface, fontFamily = MontserratFamily, fontWeight = FontWeight.Normal)
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("₹$walletAmount", fontWeight = FontWeight.Normal, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
+                        Text("₹$walletAmount", fontWeight = FontWeight.Normal, fontSize = 14.sp, fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onSurface)
                     }
                     Checkbox(
                         checked = isWalletUsed,
@@ -251,10 +247,10 @@ fun PreviewScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Promotion Details", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = BLACK)
+            Text("Promotion Details", fontWeight = FontWeight.Bold, fontSize = 14.sp, fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onSurface)
             
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Ad Name", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+            Text("Ad Name", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(8.dp))
             CustomTextField(formState.name, "", onValueChange = {})
 
@@ -325,18 +321,18 @@ fun PreviewScreen(
                 .fillMaxWidth().padding(12.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DarkBlue,
-                disabledContainerColor = Color.LightGray
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
             )
         ) {
             if (addPromotionState is UiState.Loading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    color = White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
             } else {
-                Text("Continue", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(8.dp))
+                Text("Continue", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.padding(8.dp))
             }
         }
     }

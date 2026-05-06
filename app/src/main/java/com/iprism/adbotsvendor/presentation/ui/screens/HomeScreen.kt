@@ -47,14 +47,14 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .statusBarsPadding()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .background(DarkBlue)
+                .background(MaterialTheme.colorScheme.primary)
                 .padding(12.dp)
         ) {
             Row(
@@ -108,7 +108,7 @@ fun HomeScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "Hyderabad",
-                            color = White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -116,12 +116,12 @@ fun HomeScreen(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Text(
                         text = "Road No 4, Banjara Hills...",
-                        color = White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontFamily = MontserratFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp
@@ -149,7 +149,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(LightBlue1)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(12.dp),
         ) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -165,7 +165,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "Grow your brand with us.",
-                color = Red,
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.headlineSmall
             )
 
@@ -174,7 +174,7 @@ fun HomeScreen(
             Text(
                 text = "Advertise your business on high-visibility digital screens and reach thousands of people every day. Turn attention into customers with powerful visual promotions. Turn attention into customers with powerful visual promotion",
                 style = MaterialTheme.typography.bodySmall,
-                color = BLACK1
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -188,8 +188,8 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, DarkBlue),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBlue),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                 ) {
                     Text(
                         text = "View More",
@@ -205,7 +205,7 @@ fun HomeScreen(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Red)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
                     Text(
                         text = "Promote now",

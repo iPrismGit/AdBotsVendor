@@ -28,14 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.Green
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
-import com.iprism.adbotsvendor.presentation.ui.theme.LightBlue
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsvendor.presentation.ui.theme.White
 import com.iprism.adbotsvendor.presentation.viewmodels.WalletViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -69,7 +62,7 @@ fun WalletScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         Row(
@@ -84,6 +77,7 @@ fun WalletScreen(
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -94,6 +88,7 @@ fun WalletScreen(
                 Icon(
                     painter = painterResource(R.drawable.wallet_history_img),
                     contentDescription = "History",
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -110,6 +105,7 @@ fun WalletScreen(
             Text(
                 text = "Wallet",
                 style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
 
@@ -124,12 +120,12 @@ fun WalletScreen(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = MontserratFamily,
-                    color = Green
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = "Available Wallet Amount",
                     fontSize = 21.sp,
-                    color = BLACK,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = MontserratFamily,
                     fontWeight = FontWeight.Medium
                 )
@@ -146,12 +142,12 @@ fun WalletScreen(
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     textAlign = TextAlign.Center,
-                    color = BLACK
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
                 placeholder = {
                     Text(
                         "Add money to Wallet",
-                        color = Grey555,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodySmall
@@ -163,8 +159,8 @@ fun WalletScreen(
                 shape = RoundedCornerShape(30.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = BorderGrey,
-                    focusedBorderColor = LightBlue
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 ),
                 singleLine = true,
             )
@@ -176,6 +172,7 @@ fun WalletScreen(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = MontserratFamily,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
 
@@ -195,10 +192,10 @@ fun WalletScreen(
                             .weight(1f)
                             .height(45.dp)
                             .clip(RoundedCornerShape(25.dp))
-                            .background(if (isSelected) LightBlue else Color.White)
+                            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                             .border(
                                 width = 1.dp,
-                                color = if (isSelected) LightBlue else BorderGrey,
+                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                                 shape = RoundedCornerShape(25.dp)
                             )
                             .clickable {
@@ -209,7 +206,7 @@ fun WalletScreen(
                     ) {
                         Text(
                             text = "₹$opt",
-                            color = if (isSelected) Color.White else Color.LightGray,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Normal,
                             fontFamily = MontserratFamily,
                             fontSize = 12.sp
@@ -230,13 +227,13 @@ fun WalletScreen(
                 .padding(all = 12.dp)
                 .imePadding(),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             enabled = amount.toIntOrNull() != null && amount.isNotEmpty()
         ) {
             Text(
                 text = "Continue",
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(8.dp)
             )
         }

@@ -42,7 +42,7 @@ fun ProfileScreen(
     navController: NavHostController,
     viewModel: ProfileViewModel
 ) {
-    val gradientColors = listOf(Color(0xFF273F87), Color(0xFFEEEEEE), Color(0xFFEEEEEE))
+    val gradientColors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.background)
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     val profileState by viewModel.profileState.collectAsStateWithLifecycle()
@@ -98,14 +98,14 @@ fun ProfileScreen(
             Text(
                 text = userName,
                 style = MaterialTheme.typography.headlineSmall,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = {navController.navigate("edit_profile")}) {
                 Icon(
                     painter = painterResource(R.drawable.edit_icon),
                     contentDescription = "Edit",
-                    tint = White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -139,7 +139,7 @@ fun ProfileScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             shape = RoundedCornerShape(12.dp),
         ) {
@@ -178,11 +178,11 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 30.dp)
-                .border(0.dp, Red, RoundedCornerShape(12.dp)),
+                .border(0.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Red
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.error
             )
         ) {
             Text(
@@ -201,7 +201,7 @@ fun ActionCard(modifier: Modifier, title: String, icon: Painter, navigate: () ->
             .clickable(onClick = {navigate()}),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = White
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
     ) {
         Column(
@@ -212,7 +212,7 @@ fun ActionCard(modifier: Modifier, title: String, icon: Painter, navigate: () ->
                 painter = icon,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
-                tint = BLACK
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -220,7 +220,7 @@ fun ActionCard(modifier: Modifier, title: String, icon: Painter, navigate: () ->
                 fontFamily = MontserratFamily,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = BLACK
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -244,7 +244,7 @@ fun ProfileOptionItem(icon: Painter, title: String, navigate: () -> Unit) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium,
-            color = BLACK,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
         )
     }
@@ -255,7 +255,7 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -268,7 +268,7 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                     text = "Are you sure you want\nLogout?",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -283,10 +283,10 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                             .weight(1f)
                             .height(48.dp),
                         shape = RoundedCornerShape(24.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Black),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
                     ) {
-                        Text(text = "Yes", color = BLACK, fontSize = 16.sp, fontFamily = MontserratFamily
+                        Text(text = "Yes", color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontFamily = MontserratFamily
                             , fontWeight = FontWeight.Normal)
                     }
 

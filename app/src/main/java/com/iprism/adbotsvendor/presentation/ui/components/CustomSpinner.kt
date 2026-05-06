@@ -18,8 +18,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -49,7 +47,7 @@ fun CustomSpinner(
             value = selectedItem?.name ?: "",
             onValueChange = {},
             readOnly = true,
-            placeholder = { Text(label, style = MaterialTheme.typography.bodySmall, color = Grey555)},
+            placeholder = { Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))},
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
@@ -58,7 +56,8 @@ fun CustomSpinner(
                 .fillMaxWidth(),
             shape = RoundedCornerShape(10.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = LightGrey
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
 

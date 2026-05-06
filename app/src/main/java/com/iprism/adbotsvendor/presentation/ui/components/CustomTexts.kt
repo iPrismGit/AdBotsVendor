@@ -15,9 +15,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey
 
 
 @Composable
@@ -25,7 +22,7 @@ fun TitleText(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = BLACK
+        color = MaterialTheme.colorScheme.onSurface
     )
 }
 
@@ -36,13 +33,13 @@ fun RequiredTitleText(text: String) {
             append(text)
 
             withStyle(
-                style = SpanStyle(color = Color.Red)
+                style = SpanStyle(color = MaterialTheme.colorScheme.error)
             ) {
                 append(" *")
             }
         },
         style = MaterialTheme.typography.bodySmall,
-        color = BLACK
+        color = MaterialTheme.colorScheme.onSurface
     )
 }
 
@@ -62,18 +59,19 @@ fun CustomTextField(
         enabled = enabled,
         readOnly = readOnly,
         textStyle = MaterialTheme.typography.bodySmall,
-        placeholder = { Text(placeholder, style = MaterialTheme.typography.bodySmall, color = Grey555)},
+        placeholder = { Text(placeholder, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))},
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = LightGrey,
-            disabledTextColor = BLACK,
-            disabledBorderColor = LightGrey,
-            disabledPlaceholderColor = Grey555,
-            disabledContainerColor = Color.Transparent
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            disabledContainerColor = Color.Transparent,
+            focusedBorderColor = MaterialTheme.colorScheme.primary
         )
     )
 }

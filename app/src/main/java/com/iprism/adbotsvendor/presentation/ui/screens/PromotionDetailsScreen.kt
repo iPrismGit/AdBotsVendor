@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,10 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsvendor.presentation.ui.theme.White
 import com.iprism.adbotsvendor.presentation.viewmodels.PromotionDetailsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -33,14 +29,12 @@ fun PromotionDetailsScreen(
     onBack : () -> Unit,
     viewModel: PromotionDetailsViewModel = hiltViewModel()
 ) {
-    val redColor = Color(0xFFEF4444)
-    val dividerColor = Color(0xFFEEEEEE)
     val state by viewModel.response.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 12.dp)
             .statusBarsPadding()
     ) {
@@ -51,7 +45,7 @@ fun PromotionDetailsScreen(
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = BLACK,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp),
             )
         }
@@ -71,12 +65,12 @@ fun PromotionDetailsScreen(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = MontserratFamily,
-                            color = Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = " (${details.bussinessName})",
                             fontSize = 20.sp,
-                            color = Black,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Normal
                         )
@@ -87,7 +81,7 @@ fun PromotionDetailsScreen(
                     Text(
                         text = "Promotion Analytics",
                         fontSize = 16.sp,
-                        color = BLACK1,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall
                     )
 
@@ -95,25 +89,25 @@ fun PromotionDetailsScreen(
 
                     // Data Rows
                     AnalyticsRow(label = "Start Date", value = details.startDate)
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "End Date", value = details.endDate)
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Total Days", value = "${details.noOfDays} Days")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Price", value = "₹${details.totalAmount}")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Play Time", value = "${details.playTime} Minutes")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Screens", value = details.screeens)
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Area", value = "${details.areasCount} Locations")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
                 }
 
                 Button(
@@ -122,12 +116,12 @@ fun PromotionDetailsScreen(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = redColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
                     Text(
                         text = "Extend Plan",
                         style = MaterialTheme.typography.labelMedium,
-                        color = White,
+                        color = MaterialTheme.colorScheme.onError,
                         modifier = Modifier.padding(8.dp)
                     )
                 }
@@ -162,14 +156,14 @@ fun AnalyticsRow(label: String, value: String) {
             fontSize = 13.sp,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = value,
             fontSize = 13.sp,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

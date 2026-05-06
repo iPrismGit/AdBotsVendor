@@ -23,8 +23,6 @@ import androidx.navigation.NavHostController
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.wallethistory.HistoryItem
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey2
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsvendor.presentation.viewmodels.WalletHistoryViewModel
 import com.iprism.adbotsvendor.utils.UiState
@@ -53,7 +51,7 @@ fun WalletHistoryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .statusBarsPadding()
         ) {
             IconButton(
@@ -63,7 +61,7 @@ fun WalletHistoryScreen(
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
-                    tint = BLACK,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -71,7 +69,7 @@ fun WalletHistoryScreen(
             Text(
                 text = "Wallet History",
                 style = MaterialTheme.typography.headlineSmall,
-                color = BLACK,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(all = 12.dp)
             )
 
@@ -112,7 +110,7 @@ fun WalletHistoryScreen(
             Text(
                 text = (uiState as UiState.Error).message,
                 modifier = Modifier.align(Alignment.Center),
-                color = BLACK
+                color = MaterialTheme.colorScheme.error
             )
         }
     }
@@ -120,7 +118,7 @@ fun WalletHistoryScreen(
 
 @Composable
 fun TransactionItem(transaction: HistoryItem) {
-    val amountColor = if (transaction.type.lowercase() == "debit") Color.Red else Color(0xFF00C566)
+    val amountColor = if (transaction.type.lowercase() == "debit") MaterialTheme.colorScheme.error else Color(0xFF00C566)
     val amountPrefix = if (transaction.type.lowercase() == "debit") "-₹" else "₹"
 
     Column(
@@ -138,7 +136,7 @@ fun TransactionItem(transaction: HistoryItem) {
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
                 fontFamily = MontserratFamily,
-                color = BLACK
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "$amountPrefix${transaction.amount}",
@@ -161,14 +159,14 @@ fun TransactionItem(transaction: HistoryItem) {
                 fontSize = 14.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
-                color = LightGrey2
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = transaction.createdOn,
                 fontSize = 14.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
-                color = LightGrey2
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

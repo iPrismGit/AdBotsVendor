@@ -1,6 +1,7 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.contentpages.ContentPagesRequest
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
 import com.iprism.adbotsvendor.presentation.viewmodels.ContentPagesViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -55,7 +55,7 @@ fun ContentPageScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding()
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).statusBarsPadding()
     ) {
         IconButton(
             onClick = { onBack() },
@@ -64,7 +64,7 @@ fun ContentPageScreen(
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = BLACK,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -81,7 +81,11 @@ fun ContentPageScreen(
                 "about_us" -> "About Us"
                 else -> "Content"
             }
-            Text(title, style = MaterialTheme.typography.headlineMedium)
+            Text(
+                title,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(Modifier.height(16.dp))
 
             if (state is UiState.Success) {
@@ -89,7 +93,8 @@ fun ContentPageScreen(
                     ?: "No content available"
                 Text(
                     text = content,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

@@ -23,9 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsvendor.R
 import com.iprism.adbotsvendor.data.models.LoginRequest
-import com.iprism.adbotsvendor.presentation.ui.theme.BorderGrey
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.Grey555
 import com.iprism.adbotsvendor.presentation.viewmodels.LoginViewModel
 import com.iprism.adbotsvendor.utils.UiState
 import kotlinx.coroutines.flow.collectLatest
@@ -57,7 +54,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -76,8 +73,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .border(1.dp, BorderGrey, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-            color = Color.White,
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+            color = MaterialTheme.colorScheme.surface,
             tonalElevation = 2.dp
         ) {
             Column(
@@ -87,7 +84,7 @@ fun LoginScreen(
             ) {
                 Text(
                     text = "Mobile Number",
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium
                 )
 
@@ -97,7 +94,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
@@ -112,7 +109,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(1.dp),
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.outlineVariant
                     )
 
                     TextField(
@@ -123,11 +120,11 @@ fun LoginScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = MaterialTheme.typography.bodySmall,
+                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         placeholder = {
                             Text(
                                 "Enter Mobile Number",
-                                color = Grey555,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         },
@@ -147,7 +144,7 @@ fun LoginScreen(
 
                 Text(
                     text = "By clicking, I accept the terms of service and privacy policy",
-                    color = Color.DarkGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(modifier = Modifier.height(32.dp))
@@ -176,19 +173,19 @@ fun LoginScreen(
                         .imePadding(),
                     enabled = loginState !is UiState.Loading,
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     if (loginState is UiState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             strokeWidth = 2.dp
                         )
                     } else {
                         Text(
                             text = "Continue",
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(8.dp),
                         )
                     }

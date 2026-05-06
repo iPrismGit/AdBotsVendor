@@ -1,6 +1,7 @@
 package com.iprism.adbotsvendor.presentation.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,8 +42,6 @@ import com.iprism.adbotsvendor.presentation.ui.components.CustomSpinner
 import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
 import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsvendor.presentation.viewmodels.ProfileDetailsViewModel
 import com.iprism.adbotsvendor.utils.UiState
 
@@ -134,6 +133,7 @@ fun EditProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         IconButton(
@@ -143,7 +143,7 @@ fun EditProfileScreen(
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = BLACK,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -156,7 +156,8 @@ fun EditProfileScreen(
         ) {
             Text(
                 stringResource(R.string.add_business_details),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(Modifier.height(16.dp))
             TitleText(stringResource(R.string.your_name))
@@ -246,18 +247,19 @@ fun EditProfileScreen(
                 .imePadding(),
             enabled = registerState !is UiState.Loading,
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             if (registerState is UiState.Loading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
             } else {
                 Text(
                     "Update",
                     style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(8.dp)
                 )
             }

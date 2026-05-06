@@ -76,12 +76,7 @@ import com.iprism.adbotsvendor.presentation.ui.components.CustomTextField
 import com.iprism.adbotsvendor.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsvendor.presentation.ui.components.SpinnerItem
 import com.iprism.adbotsvendor.presentation.ui.components.TitleText
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK
-import com.iprism.adbotsvendor.presentation.ui.theme.BLACK1
-import com.iprism.adbotsvendor.presentation.ui.theme.DarkBlue
-import com.iprism.adbotsvendor.presentation.ui.theme.LightGrey1
 import com.iprism.adbotsvendor.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsvendor.presentation.ui.theme.White
 import com.iprism.adbotsvendor.presentation.viewmodels.AddPromotionViewModel
 import com.iprism.adbotsvendor.utils.UiState
 import kotlinx.coroutines.flow.collectLatest
@@ -184,7 +179,7 @@ fun PromotionScreen(
         ) { DatePicker(state = datePickerState) }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -197,7 +192,7 @@ fun PromotionScreen(
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
-                    tint = BLACK,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -208,7 +203,11 @@ fun PromotionScreen(
                     .padding(12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Promotion Details", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    "Promotion Details",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(Modifier.height(16.dp))
 
                 TitleText("Ad Name")
@@ -291,20 +290,20 @@ fun PromotionScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
-                        .background(White, RoundedCornerShape(12.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(String.format("%02d", formState.screenCount), fontFamily = MontserratFamily, color = BLACK, fontSize = 12.sp)
+                    Text(String.format("%02d", formState.screenCount), fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        Text("-", fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { if (formState.screenCount > 1) viewModel.setScreenCount(formState.screenCount - 1) })
-                        Text(formState.screenCount.toString(), fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily, color = BLACK)
-                        Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { viewModel.setScreenCount(formState.screenCount + 1) })
+                        Text("-", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.clickable { if (formState.screenCount > 1) viewModel.setScreenCount(formState.screenCount - 1) })
+                        Text(formState.screenCount.toString(), fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = MontserratFamily, color = MaterialTheme.colorScheme.onSurface)
+                        Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.clickable { viewModel.setScreenCount(formState.screenCount + 1) })
                     }
                 }
 
@@ -347,11 +346,12 @@ fun PromotionScreen(
                     .padding(start = 12.dp, bottom = 12.dp, end = 12.dp)
                     .imePadding(),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             ) {
                 Text(
                     "Continue",
                     style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(8.dp)
                 )
             }
@@ -381,8 +381,8 @@ fun VideoUploadBox(
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
-            .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
-            .background(White, RoundedCornerShape(12.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .clickable(enabled = videoUri == null) { onUploadClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -391,11 +391,11 @@ fun VideoUploadBox(
                 Icon(
                     imageVector = Icons.Default.PlayCircle,
                     contentDescription = null,
-                    tint = DarkBlue,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(Modifier.height(8.dp))
-                Text("Upload Promotional Video", style = MaterialTheme.typography.bodySmall, color = BLACK1)
+                Text("Upload Promotional Video", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else {
             Column(
@@ -406,7 +406,7 @@ fun VideoUploadBox(
                 Icon(
                     imageVector = Icons.Default.PlayCircle,
                     contentDescription = null,
-                    tint = DarkBlue,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(48.dp).clickable { onPreviewClick() }
                 )
                 Spacer(Modifier.height(8.dp))
@@ -414,10 +414,10 @@ fun VideoUploadBox(
                     "Video Selected",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = DarkBlue
+                    color = MaterialTheme.colorScheme.primary
                 )
                 TextButton(onClick = onDeleteClick) {
-                    Text("Remove Video", color = Color.Red)
+                    Text("Remove Video", color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -501,7 +501,8 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .border(1.dp, LightGrey1, RoundedCornerShape(12.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .clickable { onClick() }
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.CenterStart
@@ -515,10 +516,10 @@ fun DateSelectorBox(text: String, onClick: () -> Unit) {
                 text = text,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
-                color = if (text == "Choose") Color.LightGray else BLACK,
+                color = if (text == "Choose") MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp
             )
-            Icon(painter = painterResource(R.drawable.calender_img), contentDescription = null, modifier = Modifier.size(20.dp), tint = BLACK1)
+            Icon(painter = painterResource(R.drawable.calender_img), contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
