@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -85,6 +88,31 @@ fun OTPView(
                 }
             }
         }
+
+        // Disable selection handles by providing transparent selection colors
+        val customTextSelectionColors = TextSelectionColors(
+            handleColor = Color.Transparent,
+            backgroundColor = Color.Transparent
+        )
+
+        CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
+            BasicTextField(
+                value = otpValue,
+                onValueChange = {
+                    if (it.length <= otpLength && it.all { char -> char.isDigit() }) {
+                        otpValue = it
+                        onOtpComplete(it)
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .fillMaxWidth()
+                    .height(60.dp),
+                textStyle = TextStyle(color = Color.Transparent),
+                cursorBrush = SolidColor(Color.Transparent)
+            )
+        }
     }
 }
 
@@ -111,6 +139,6 @@ fun BlinkingCursor() {
         modifier = Modifier
             .width(2.dp)
             .height(24.dp)
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = alpha))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
     )
 }
